@@ -7,10 +7,15 @@
 #include "mruby/string.h"
 #include "mruby/hash.h"
 
+#include "gfx/lcd.h"
+#include "core/bitmap.h"
+
 mrb_value
 mrb_display_s_clear(mrb_state *mrb, mrb_value self)
 {
-  /*TODO Implement*/
+
+	printf("LCD Clear!");
+	lcdClear();
 
   return mrb_nil_value();
 }
@@ -22,7 +27,8 @@ mrb_display_s_clear_line(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &line);
 
-  /*TODO Implement*/
+  lcdSetCursorLC(line, 0);
+  lcdClearEOL(-1);
 
   return mrb_nil_value();
 }
@@ -35,7 +41,9 @@ mrb_display_s_print_bitmap(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "oii", &path, &y, &x);
 
-  /*TODO Implement*/
+  printf("display bitmap: x=%d, y=%d, bitmap=%s", x,y, (char *) mrb_ptr(path));
+
+  lcdBitmapLoadFromFileToScreen((const char *) mrb_ptr(path), x, y);
 
   return mrb_nil_value();
 }
@@ -47,8 +55,9 @@ mrb_display_s_print_line(mrb_state *mrb, mrb_value self)
   mrb_int x, y;
 
   mrb_get_args(mrb, "oii", &buf, &y, &x);
+  printf("display bitmap: x=%d, y=%d, bitmap=%s", x,y, (char *) mrb_ptr(buf));
 
-  /*TODO Implement*/
+  lcdPrint(x, y, (char *) mrb_ptr(buf));
 
   return mrb_nil_value();
 }
