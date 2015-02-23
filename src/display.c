@@ -16,17 +16,6 @@
 #include "avixy/bitmap.h"
 #endif
 
-/* Dúvidas
- *
- *  1 - Como inicializa o display?
- *  2 - Como a app sabe o tamanho da tela?
- *  3 - Como seleciona Fonte?
- *  	Tudo isso é feito na app que inicializa o mruby.
- *
- *  4 - Como tratar transparência no bitmap?
- *  	O Thiago disse que usam RGBA. Nosso SDk não suporta o alfa, mas o Ananias ficou de ver como fazer.
- */
-
 mrb_value
 mrb_display_s_clear(mrb_state *mrb, mrb_value self)
 {
