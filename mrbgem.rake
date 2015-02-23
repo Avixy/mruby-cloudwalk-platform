@@ -3,7 +3,9 @@ MRuby::Gem::Specification.new('mruby-cloudwalk-platform') do |spec|
   spec.authors = 'CloudWalk Inc.'
 
   spec.cc.include_paths << "#{build.root}/src"
-
+  spec.cc.include_paths << "/home/sdk3400/avixy/include"
+  spec.cc.include_paths << "/home/sdk3400/workspace/include/libAvixy"
+  
   # Add compile flags
   # spec.cc.flags << ''
 
