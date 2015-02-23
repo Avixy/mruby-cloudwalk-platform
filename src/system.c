@@ -101,7 +101,7 @@ mrb_audio_s__beep(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_system_s_reboot(mrb_state *mrb, mrb_value self)
 {
- return mrb_fixnum_value(reboot(RB_AUTOBOOT));
+  return mrb_fixnum_value(reboot(RB_AUTOBOOT));
 }
 
 void
