@@ -6,6 +6,13 @@ MRuby::Gem::Specification.new('mruby-cloudwalk-platform') do |spec|
   spec.cc.include_paths << "/home/sdk3400/avixy/include"
   spec.cc.include_paths << "/home/sdk3400/workspace/include/libAvixy"
   
+  spec.linker.libraries << 'Avixy3400'
+  spec.linker.libraries << 'MagCard'
+  spec.linker.libraries << 'Mifare'
+  spec.linker.libraries << 'emvc1'
+  spec.linker.libraries << 'emv_cl1'
+  spec.linker.libraries << 'emv_hal'
+  spec.linker.library_paths << "/home/sdk3400/workspace/lib"
   # Add compile flags
   # spec.cc.flags << ''
 
