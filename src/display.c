@@ -10,6 +10,17 @@
 #include "gfx/lcd.h"
 #include "core/bitmap.h"
 
+/* Dúvidas
+ *
+ *  1 - Como inicializa o display?
+ *  2 - Como a app sabe o tamanho da tela?
+ *  3 - Como seleciona Fonte?
+ *  	Tudo isso é feito na app que inicializa o mruby.
+ *
+ *  4 - Como tratar transparência no bitmap?
+ *  	O Thiago disse que usam RGBA. Nosso SDk não suporta o alfa, mas o Ananias ficou de ver como fazer.
+ */
+
 mrb_value
 mrb_display_s_clear(mrb_state *mrb, mrb_value self)
 {
@@ -57,7 +68,7 @@ mrb_display_s_print_line(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "oii", &buf, &y, &x);
   printf("display bitmap: x=%d, y=%d, bitmap=%s", x,y, (char *) mrb_ptr(buf));
 
-  lcdPrint(x, y, (char *) mrb_ptr(buf));
+  lcdPrint(y, x, (char *) mrb_ptr(buf));
 
   return mrb_nil_value();
 }
