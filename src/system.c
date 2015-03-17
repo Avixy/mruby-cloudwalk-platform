@@ -43,8 +43,7 @@ mrb_system_s__set_backlight(mrb_state *mrb, mrb_value self)
 
   avxSetBacklight(mode, mode);
 
-  /*TODO Implement*/
-
+  
   return mrb_fixnum_value(mode);
 }
 
@@ -74,9 +73,12 @@ mrb_system_s__battery(mrb_state *mrb, mrb_value self)
   {
 	  //Report error.
   } else {
-	   capacity = (batInfo.charge / batInfo.capacity) * 5;
+	   capacity = ((batInfo.charge  * 100) / batInfo.capacity);
 	  if (batInfo.power_supply_present){
-		  capacity = (capacity == 4 ? 6 : 5);
+		  capacity = (capacity >= 95 ? 6 : 5);
+	  } else {
+		  capacity = capacity / 5;
+		  capacity = MIN(capacity,4);
 	  }
   }
 
@@ -100,7 +102,7 @@ mrb_audio_s__beep(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_system_s_reboot(mrb_state *mrb, mrb_value self)
 {
-  return mrb_fixnum_value(OsReboot());
+ return mrb_fixnum_value(reboot(RB_AUTOBOOT));
 }
 
 static mrb_value
