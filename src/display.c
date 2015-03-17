@@ -83,7 +83,8 @@ mrb_display_s_print_line(mrb_state *mrb, mrb_value self)
   printf("display bitmap: x=%d, y=%d, bitmap=%s", x,y, (char *) mrb_ptr(buf));
 
   lcdPrint(y, x, (char *) mrb_ptr(buf));
-
+#endif
+  
   return mrb_nil_value();
 }
 
