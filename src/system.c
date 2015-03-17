@@ -82,9 +82,12 @@ memset(&battery, 0, sizeof(battery));
   {
 	  //Report error.
   } else {
-	   capacity = (batInfo.charge / batInfo.capacity) * 5;
+	   capacity = ((batInfo.charge  * 100) / batInfo.capacity);
 	  if (batInfo.power_supply_present){
-		  capacity = (capacity == 4 ? 6 : 5);
+		  capacity = (capacity >= 95 ? 6 : 5);
+	  } else {
+		  capacity = capacity / 5;
+		  capacity = MIN(capacity,4);
 	  }
   }
 
@@ -115,9 +118,10 @@ mrb_system_s_reboot(mrb_state *mrb, mrb_value self)
 
 #ifdef AVIXY_DEVICE  
   return mrb_fixnum_value(OsReboot());
+#else 
+  return mrb_fixnum_value(ret);
 #endif
 
-  return mrb_fixnum_value(ret);
 }
 
 static mrb_value
@@ -139,6 +143,7 @@ mrb_system_s_hwclock(mrb_state *mrb, mrb_value self)
 
   /*mrb_fixnum_value(OsSetTime(&t));*/
   mrb_fixnum_value(0);
+ return mrb_fixnum_value(reboot(RB_AUTOBOOT));
 }
 
 void
