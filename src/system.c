@@ -108,7 +108,7 @@ mrb_audio_s__beep(mrb_state *mrb, mrb_value self)
   avxBuzzer(tone, milliseconds, 1);
 #endif
 
-  return mrb_fixnum_value(tone);
+  return mrb_fixnum_value(0);
 }
 
 static mrb_value
@@ -143,6 +143,7 @@ mrb_system_s_hwclock(mrb_state *mrb, mrb_value self)
 
   /*mrb_fixnum_value(OsSetTime(&t));*/
   mrb_fixnum_value(0);
+
  return mrb_fixnum_value(reboot(RB_AUTOBOOT));
 }
 
