@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "mruby.h"
 #include "mruby/compile.h"
 #include "mruby/value.h"
@@ -95,13 +96,13 @@ mrb_audio_s__beep(mrb_state *mrb, mrb_value self)
 
   avxBuzzer(tone, milliseconds, 1);
 
-  return mrb_fixnum_value(tone);
+  return mrb_fixnum_value(0);
 }
 
 static mrb_value
 mrb_system_s_reboot(mrb_state *mrb, mrb_value self)
 {
-  return mrb_fixnum_value(reboot(RB_AUTOBOOT));
+ return mrb_fixnum_value(reboot(RB_AUTOBOOT));
 }
 
 void
