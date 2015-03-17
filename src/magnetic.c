@@ -22,6 +22,9 @@ mrb_magnetic_s_open(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(ret);
 }
 
+/* TODO: Ver o que ele quer com esse read
+ *
+ */
 mrb_value
 mrb_magnetic_s_read(mrb_state *mrb, mrb_value self)
 {
@@ -51,14 +54,46 @@ mrb_magnetic_s_tracks(mrb_state *mrb, mrb_value self)
 
   if (readersMagGetInfo(&magTracksInfo) > 0) {
 
-		mrb_hash_set(mrb, hash,mrb_symbol_value(mrb_intern_cstr(mrb, "track1")),
-				mrb_str_new_cstr(mrb, magTracksInfo.tracks[0].Chars));
-		mrb_hash_set(mrb, hash,
-				mrb_symbol_value(mrb_intern_cstr(mrb, "track2")),
-				mrb_str_new_cstr(mrb, magTracksInfo.tracks[1].Chars));
-		mrb_hash_set(mrb, hash,
-				mrb_symbol_value(mrb_intern_cstr(mrb, "track3")),
-				mrb_str_new_cstr(mrb, magTracksInfo.tracks[2].Chars));
+		mrb_value trilha;
+		if (magTracksInfo.tracks[0].status == 0
+				&& magTracksInfo.tracks[0].CharCount > 0)
+		{
+			mrb_value trilha = mrb_str_new_cstr(mrb,
+					magTracksInfo.tracks[0].Chars);
+		}
+		else
+		{
+			trilha = mrb_str_new_cstr(mrb, "");
+		}
+
+		mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track1")), trilha);
+
+		if (magTracksInfo.tracks[1].status == 0
+				&& magTracksInfo.tracks[1].CharCount > 0)
+		{
+			mrb_value trilha = mrb_str_new_cstr(mrb,
+					magTracksInfo.tracks[1].Chars);
+		}
+		else
+		{
+			trilha = mrb_str_new_cstr(mrb, "");
+		}
+
+		mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track2")), trilha);
+
+		if (magTracksInfo.tracks[2].status == 0
+				&& magTracksInfo.tracks[2].CharCount > 0)
+		{
+			mrb_value trilha = mrb_str_new_cstr(mrb,
+					magTracksInfo.tracks[2].Chars);
+		}
+		else
+		{
+			trilha = mrb_str_new_cstr(mrb, "");
+		}
+
+		mrb_hash_set(mrb, hash,mrb_symbol_value(mrb_intern_cstr(mrb, "track3")), trilha);
+
 	}
 
 
