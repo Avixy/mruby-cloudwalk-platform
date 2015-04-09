@@ -11,6 +11,7 @@
 
 #ifdef AVIXY_DEVICE
 #include "core/device_core.h"
+#include "sys/param.h"
 #endif
 
 static mrb_value
@@ -73,7 +74,7 @@ mrb_system_s__battery(mrb_state *mrb, mrb_value self)
   int capacity = 0;
 #endif
 
-memset(&battery, 0, sizeof(battery));
+  memset(&battery, 0, sizeof(battery));
 
 #ifdef AVIXY_DEVICE
   memset(&batInfo, 0, sizeof(struct avx_charger));
@@ -81,6 +82,7 @@ memset(&battery, 0, sizeof(battery));
   if ( avxGetBatteryInfo(&batInfo) < 0 )
   {
 	  //Report error.
+	  printf("Error on getBatteryInfo!\n");
   } else {
 	   capacity = ((batInfo.charge  * 100) / batInfo.capacity);
 	  if (batInfo.power_supply_present){
