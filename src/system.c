@@ -10,6 +10,7 @@
 #include <sys/reboot.h>
 
 #include "core.h"
+#include "sys/param.h"
 
 static mrb_value
 mrb_system_s__serial(mrb_state *mrb, mrb_value self)
@@ -41,6 +42,7 @@ mrb_system_s__set_backlight(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &mode);
 
+  printf("Passou em set_backlight!");
   avxSetBacklight(mode, mode);
 
   
@@ -65,13 +67,17 @@ mrb_system_s__battery(mrb_state *mrb, mrb_value self)
   struct avx_charger batInfo;
   int capacity = 0;
 
+  printf("Hello Battery\n");
+
   memset(&battery, 0, sizeof(battery));
 
   memset(&batInfo, 0, sizeof(struct avx_charger));
 
+  printf("VVVVVVVVai chamar getBatteryInfo!\n");
   if ( avxGetBatteryInfo(&batInfo) < 0 )
   {
 	  //Report error.
+	  printf("Error on getBatteryInfo!\n");
   } else {
 	   capacity = ((batInfo.charge  * 100) / batInfo.capacity);
 	  if (batInfo.power_supply_present){
