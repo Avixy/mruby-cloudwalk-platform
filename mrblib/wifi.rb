@@ -58,7 +58,7 @@ class Platform::Network::Wifi
     @essid          = options[:essid].to_s
     @bssid          = options[:bssid].to_s
     @mode           = MODES[options[:mode]].to_s
-    @authentication = AUTHENTICATIONS[options[:authentication]].to_s
+    @authentication = options[:authentication].to_s#AUTHENTICATIONS[options[:authentication]].to_s
     @cipher         = CIPHERS[options[:cipher]].to_s
     @password       = options[:password].to_s
     @channel        = options[:channel].to_s
