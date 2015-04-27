@@ -28,60 +28,56 @@
 #endif
 
 
+
+
 int connectUsingDHCP = 1;
+
+int ping(char*, int);
+char* toip(char* address);
 
 static mrb_value mrb_network__ping(mrb_state *mrb, mrb_value klass)
 {
 	mrb_value ip;
-	mrb_int timeout, ret;
+	mrb_int timeout;
 	char sIp[16] =
 	{ 0x00 };
-	int status;
-	char cmdPing[32];
+	char* parsedIp;
+
+	int res = 0;
 
 	mrb_get_args(mrb, "Si", &ip, &timeout);
 
-	ret = -1;
-
 	strncpy(&sIp, RSTRING_PTR(ip), RSTRING_LEN(ip) );
 
-	snprintf(cmdPing, sizeof(cmdPing), "ping %s", sIp);
-	status = system(cmdPing);
+	printf("will ping... \n");
 
+	parsedIp = toip(sIp);
+	res = ping(parsedIp, timeout);
 
-	if (-1 != status)
-	{
-		printf("Ping result: %d", ret);
-	}
-	else
-	{
-		printf("Error on Ping!\n");
-	}
+	printf("--->ping=%d\n", res);
 
-	return mrb_fixnum_value(ret);
+	return mrb_fixnum_value(res==0);
 }
 
 static mrb_value
 mrb_wifi_dhcp_client_start(mrb_state *mrb, mrb_value klass)
 {
-  mrb_int net, ret;
+  mrb_int net;
   mrb_get_args(mrb, "i", &net);
 
   connectUsingDHCP = 1;
-  ret = 0;
 
-  return mrb_fixnum_value(ret);
+  //no avx3400, foi combinado sempre retornar sucesso, dado que o dhcp é informado na hora da conexão e nao aqui, assincronamente.
+  return mrb_fixnum_value(0);
 }
 
 static mrb_value
 mrb_wifi_dhcp_client_check(mrb_state *mrb, mrb_value klass)
 {
-  mrb_int net, ret;
+  mrb_int net;
   mrb_get_args(mrb, "i", &net);
 
-  /*TODO: Ver com o Thiago como é o processo deles, pois o nosso DHCP é direto nas conexões.*/
-
-
+  //no avx3400, foi combinado sempre retornar sucesso, dado que o dhcp é informado na hora da conexão e nao aqui, assincronamente.
   return mrb_fixnum_value(0);
 }
 
