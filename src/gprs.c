@@ -25,14 +25,7 @@
 #include "gprsInterface.h"
 
 
-/*TODO: Combinar com o Thiago métodos para:
- * Set SIM Pin. Existem Operadoras com Simcards protegidos por PIN. Observar que isso deve ser feito antes do start.
- * Get ID Do simcard.
- */
-
-
 static int simSlotSelected = 0;
-static char *prvSimPIN="";
 static char prvIdDoSimCard[32];
 
 static char strGPRSApn[32];
@@ -41,6 +34,8 @@ static char strGPRSPasswd[16];
 
 int fillAPN(int operadora, char *nomeOperadora, struct avxmodem_access_point *apn, char *nomePadraoDaOperadora, char *simID)
 {
+	printf("entrando em %s\n", __FUNCTION__);
+
 	int indOperadora = OP_INDEFINIDA;
 
 	strncpy(apn->apn, strGPRSApn, sizeof(apn->apn));
@@ -49,20 +44,30 @@ int fillAPN(int operadora, char *nomeOperadora, struct avxmodem_access_point *ap
 
 	strcpy(nomePadraoDaOperadora, nomeOperadora);
 
+	printf("saindo de %s\n", __FUNCTION__);
 	return(indOperadora);
 }
 
+static void fxProgresscallback(void)
+{
+	printf("!STATUS: %d\n", gprsComGetCurrentState());
+}
 
 /*Start the hardware*/
 static mrb_value
 mrb_gprs_start(mrb_state *mrb, mrb_value klass)
 {
+  printf("entrando no mrb_gprs_start..\n");
+
   mrb_int ret=0;
 
   avxnmInterfacePriority(AVXNM_NETIF_PRIORITIES_MODEM_ETHERNET_WIFI);
+
   gprsComSetSimSlot(simSlotSelected);
-  gprsComSetModoOperacaoDesejado(GPRS_MODO_CONECTADO);
-  ret = gprsComInit(prvSimPIN, prvIdDoSimCard, NULL, fillAPN);
+
+  gprsComSetModoOperacaoDesejado(GPRS_MODO_REGISTRADO);
+
+  printf("saindo mrb_gprs_start ..\n");
 
   return mrb_fixnum_value(ret);
 }
@@ -71,6 +76,8 @@ mrb_gprs_start(mrb_state *mrb, mrb_value klass)
 static mrb_value
 mrb_gprs_power(mrb_state *mrb, mrb_value klass)
 {
+	printf("entrando...\n");
+
   mrb_int on;
   mrb_get_args(mrb, "i", &on);
 
@@ -92,9 +99,13 @@ mrb_gprs_connect(mrb_state *mrb, mrb_value klass)
 {
   mrb_value apn, user, password;
   const char *sAPN, *sUser, *sPass;
-  int keep_alive=300000, timeout=0, ret=0;
+  int ret=0;
+
+  printf("entrando... mrb_gprs_connect\n");
 
   apn   = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@apn"));
+  printf("ping\n");
+
   sAPN  = mrb_str_to_cstr(mrb, apn);
 
   user  = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@user"));
@@ -103,11 +114,22 @@ mrb_gprs_connect(mrb_state *mrb, mrb_value klass)
   password = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@password"));
   sPass    = mrb_str_to_cstr(mrb, password);
 
+  printf("sAPN=%s, sUser=%s, sPass=%s\n", sAPN, sUser, sPass);
+
   strncpy(strGPRSApn, sAPN, sizeof(strGPRSApn));
   strncpy(strGPRSUser, sUser, sizeof(strGPRSUser));
   strncpy(strGPRSPasswd, sPass, sizeof(strGPRSPasswd));
 
+  printf("vou entrar no gprsComInit ..\n");
+
+  ret = gprsComInit("8486", prvIdDoSimCard, fxProgresscallback, fillAPN);
+
+  printf("sai no gprsComInit ..\n");
+
+
   ret = gprsComSetModoOperacaoDesejado(GPRS_MODO_CONECTADO);
+
+  printf("saindo do mrb_gprs_connect\n");
 
   return mrb_fixnum_value(ret);
 }
@@ -154,8 +176,6 @@ mrb_gprs_connected_m(mrb_state *mrb, mrb_value klass)
 static mrb_value
 mrb_gprs_disconnect(mrb_state *mrb, mrb_value klass)
 {
-  mrb_int ret=0;
-
   gprsComSetModoOperacaoDesejado(GPRS_MODO_REGISTRADO);
 
   return mrb_true_value();
