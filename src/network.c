@@ -49,12 +49,14 @@ static mrb_value mrb_network__ping(mrb_state *mrb, mrb_value klass)
 
 	strncpy(&sIp, RSTRING_PTR(ip), RSTRING_LEN(ip) );
 
-	printf("will ping... \n");
-
 	parsedIp = toip(sIp);
+
+	printf("will ping %s", sIp);
+	printf(" (%s)\n", parsedIp);
+
 	res = ping(parsedIp, timeout);
 
-	printf("--->ping=%d\n", res);
+	printf("---> ping=%d\n", res);
 
 	return mrb_fixnum_value(res==0);
 }
