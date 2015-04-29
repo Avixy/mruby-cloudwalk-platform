@@ -47,16 +47,20 @@ int ping(char* to, int timeout)
     int siz;
     char POSip[20] = "";
 
+    //printf("!!!!!!!!!!!!!!!!!entering on ping\n");
+
     int ret = 1;
 
     int selectResult = 0;
     struct timeval tv;
 
+    //printf("wifiComGetCurrentState() = %d, gprsComGetCurrentState() = %d\n", wifiComGetCurrentState(), gprsComGetCurrentState());
+
     if(wifiComGetCurrentState() == W_CONNECTED)
     {
     	strcpy(POSip, wifiComGetCurrentIpStr());
     }
-    else if(gprsComGetCurrentState() == G_CONNECTED)
+    else if(gprsComGetCurrentState() == G_PPP_CONNECTED)
     {
     	strcpy(POSip, gprsComGetCurrentIpStr());
     }
@@ -65,8 +69,8 @@ int ping(char* to, int timeout)
     	return 1;
     }
 
-    printf("Source address: %s\n", POSip);
-    printf("Destination address: %s\n", to);
+    //printf("Source address: %s\n", POSip);
+    //printf("Destination address: %s\n", to);
     /*
      * allocate all necessary memory
     */
@@ -97,14 +101,14 @@ int ping(char* to, int timeout)
 
     //printf("ip->saddr : %s,  ip->daddr : %s-> \n",  (char*)ip->daddr, (char*)ip->saddr);
 
-    if(ip->saddr == INADDR_NONE || ip->daddr == INADDR_NONE)
-    {
-    	printf("anything is wrong..\n");
-    }
-    else
-    {
-    	printf("IPs is ok....\n");
-    }
+//    if(ip->saddr == INADDR_NONE || ip->daddr == INADDR_NONE)
+//    {
+//    	printf("anything is wrong..\n");
+//    }
+//    else
+//    {
+//    	printf("IPs is ok....\n");
+//    }
 
     if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) == -1)
     {
@@ -139,7 +143,7 @@ int ping(char* to, int timeout)
      */
 
     sendto(sockfd, packet, ip->tot_len, 0, (struct sockaddr *)&connection, sizeof(struct sockaddr));
-    printf("Sent %d byte packet to %s\n", ip->tot_len, dst_addr);
+    //printf("Sent %d byte packet to %s\n", ip->tot_len, dst_addr);
 
     /*
      *  now we listen for responses
@@ -162,10 +166,10 @@ int ping(char* to, int timeout)
 		else
 		{
 			ret = 0;
-			printf("Received %d byte reply from %s:\n", siz , dst_addr);
+			//printf("Received %d byte reply from %s:\n", siz , dst_addr);
 			ip_reply = (struct iphdr*) buffer;
-			printf("ID: %d\n", ntohs(ip_reply->id));
-			printf("TTL: %d\n", ip_reply->ttl);
+			//printf("ID: %d\n", ntohs(ip_reply->id));
+			//printf("TTL: %d\n", ip_reply->ttl);
 		}
     }
 
