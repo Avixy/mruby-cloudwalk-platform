@@ -10,6 +10,10 @@
 #include <stddef.h>
 #include <string.h>
 
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include "mruby/array.h"
 #include "mruby/class.h"
 #include "mruby/data.h"
@@ -23,45 +27,60 @@
   #include "mruby/error.h"
 #endif
 
-static mrb_value
-mrb_network__ping(mrb_state *mrb, mrb_value klass)
+
+
+
+int connectUsingDHCP = 1;
+
+int ping(char*, int);
+char* toip(char* address);
+
+static mrb_value mrb_network__ping(mrb_state *mrb, mrb_value klass)
 {
-  mrb_value ip;
-  mrb_int timeout, ret;
-  char sIp[16]={0x00};
+	mrb_value ip;
+	mrb_int timeout;
+	char sIp[16] =
+	{ 0x00 };
+	char* parsedIp;
 
-  mrb_get_args(mrb, "Si", &ip, &timeout);
+	int res = 0;
 
-  strncpy(&sIp, RSTRING_PTR(ip), RSTRING_LEN(ip));
+	mrb_get_args(mrb, "Si", &ip, &timeout);
 
-  /*TODO Implement*/
-  /*ret = OsNetPing(sIp, (int)timeout);*/
+	strncpy(&sIp, RSTRING_PTR(ip), RSTRING_LEN(ip) );
 
-  return mrb_fixnum_value(ret);
+	parsedIp = toip(sIp);
+
+	printf("will ping %s", sIp);
+	printf(" (%s)\n", parsedIp);
+
+	res = ping(parsedIp, timeout);
+
+	printf("---> ping=%d\n", res);
+
+	return mrb_fixnum_value(res==0);
 }
 
 static mrb_value
 mrb_wifi_dhcp_client_start(mrb_state *mrb, mrb_value klass)
 {
-  mrb_int net, ret;
+  mrb_int net;
   mrb_get_args(mrb, "i", &net);
 
-  /*TODO Implement*/
-  /*ret = OsNetStartDhcp(net);*/
+  connectUsingDHCP = 1;
 
-  return mrb_fixnum_value(ret);
+  //no avx3400, foi combinado sempre retornar sucesso, dado que o dhcp é informado na hora da conexão e nao aqui, assincronamente.
+  return mrb_fixnum_value(0);
 }
 
 static mrb_value
 mrb_wifi_dhcp_client_check(mrb_state *mrb, mrb_value klass)
 {
-  mrb_int net, ret;
+  mrb_int net;
   mrb_get_args(mrb, "i", &net);
 
-  /*TODO Implement*/
-  /*ret = OsNetCheckDhcp(net);*/
-
-  return mrb_fixnum_value(ret);
+  //no avx3400, foi combinado sempre retornar sucesso, dado que o dhcp é informado na hora da conexão e nao aqui, assincronamente.
+  return mrb_fixnum_value(0);
 }
 
 void
