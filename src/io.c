@@ -1,11 +1,21 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "mruby.h"
 #include "mruby/compile.h"
 #include "mruby/value.h"
 #include "mruby/array.h"
 #include "mruby/string.h"
 #include "mruby/hash.h"
+#include "core.h"
+#include "gfx.h"
+
+enum input_mode
+{
+	INPUT_NUMBERS = 36,
+  INPUT_LETTERS = 20,
+  INPUT_SECRET  = 28
+};
 
 static mrb_value
 mrb_platform_io_s__getc(mrb_state *mrb, mrb_value self)
@@ -14,31 +24,55 @@ mrb_platform_io_s__getc(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &timeout);
 
-  /*key = GetKey(timeout);*/
+  printf("i will get a char with timeout = %d", timeout);
+
+  key = kbdWaitKey(timeout);
 
   return mrb_fixnum_value(key);
 }
 
-/*
-@param min [int]: Minimum number of characters to press.
-@param max [int]: Maximum number of characters to press.
-@param mode [int]: Mask to be used password, only numbers, only letters and etc.
-@param y [int]: Y value, line to press.
-@param x [int]: X value, row to press.
-*/
-static mrb_value
-mrb_platform_io_s__gets(mrb_state *mrb, mrb_value self)
+static mrb_value mrb_platform_io_s__gets(mrb_state *mrb, mrb_value self)
 {
-  unsigned char sValue[128];
-  mrb_int min, max, mode, x, y;
+	int ret = 666;
+	char sValue[128], mask[128];
+	mrb_int min, max, mode, x, y;
 
-  memset(&sValue, 0, sizeof(sValue));
+	memset(sValue, '\0', sizeof(sValue));
+	memset(mask, '\0', sizeof(sValue));
 
-  mrb_get_args(mrb, "iiiii", &min, &max, &mode, &y, &x);
+	mrb_get_args(mrb, "iiiii", &min, &max, &mode, &y, &x);
+	printf("-------------> min = %d, max = %d, mode = %d, y = %d, x = %d\n",
+			min, max, mode, y, x);
 
-  /*get_string(&sValue, min, max, mode, y, x);*/
+	inputConfig(INPUT_CFG_DEFAULT, 0);
+	inputConfig(INPUT_CFG_TIMEOUT, (void *) 60000);
+	inputConfig(INPUT_CFG_DRAW_BORDER, 0);
 
-  return mrb_str_new_cstr(mrb, sValue);
+	if (mode == INPUT_NUMBERS)
+	{
+		memset(mask, '9', max);
+
+	}
+	else // INPUT_LETTERS / default
+	{
+		memset(mask, 'x', max);
+	}
+
+	lcdSetCursorLC(y, x);
+
+
+	if (mode == INPUT_SECRET)
+	{
+		ret = inputGetFormated(va("!*[%02d]%s", min, mask), sValue);
+	}
+	else
+	{
+		ret = inputGetFormated(va("![%02d]%s", min, mask), sValue);
+	}
+	printf("ret = %d, sValue = %s\n", ret, sValue);
+	//lcdPrint(y, x, sValue);
+
+	return mrb_fixnum_value(0);
 }
 
 void
@@ -46,8 +80,10 @@ mrb_io_init(mrb_state* mrb)
 {
   struct RClass *io;
 
-  io = mrb_class_get(mrb, "IO");
+  io = mrb_define_class(mrb, "IO", mrb->object_class);
 
   mrb_define_class_method(mrb , io , "_getc" , mrb_platform_io_s__getc , MRB_ARGS_REQ(1));
   mrb_define_class_method(mrb , io , "_gets" , mrb_platform_io_s__gets , MRB_ARGS_REQ(5));
+
+  inputConfig(INPUT_CFG_SET_ESCAPE, (void *)'\b');
 }
