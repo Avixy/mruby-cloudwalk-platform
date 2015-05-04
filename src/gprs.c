@@ -50,7 +50,7 @@ int fillAPN(int operadora, char *nomeOperadora, struct avxmodem_access_point *ap
 
 static void fxProgresscallback(void)
 {
-	printf("!STATUS: %d\n", gprsComGetCurrentState());
+	printf("!STATUS: %d\n", gprsComGetCurrentStateToApplication());
 }
 
 /*Start the hardware*/
@@ -144,7 +144,7 @@ mrb_gprs_connected_m(mrb_state *mrb, mrb_value klass)
   mrb_int ret=0;
   int state;
 
-  state = gprsComGetCurrentState();
+  state = gprsComGetCurrentStateToApplication();
 
   switch (state)
 	{
