@@ -8,7 +8,7 @@
 #include "mruby/hash.h"
 
 #include <avixy/mag.h>
-#include "readers/magCard.h"
+#include "magCard.h"
 
 mrb_value
 mrb_magnetic_s_open(mrb_state *mrb, mrb_value self)

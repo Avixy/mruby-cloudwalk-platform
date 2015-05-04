@@ -56,11 +56,11 @@ int ping(char* to, int timeout)
 
     //printf("wifiComGetCurrentState() = %d, gprsComGetCurrentState() = %d\n", wifiComGetCurrentState(), gprsComGetCurrentState());
 
-    if(wifiComGetCurrentState() == W_CONNECTED)
+    if(wifiComGetCurrentStateToApplication() == W_CONNECTED)
     {
     	strcpy(POSip, wifiComGetCurrentIpStr());
     }
-    else if(gprsComGetCurrentState() == G_PPP_CONNECTED)
+    else if(gprsComGetCurrentStateToApplication() == G_PPP_CONNECTED)
     {
     	strcpy(POSip, gprsComGetCurrentIpStr());
     }

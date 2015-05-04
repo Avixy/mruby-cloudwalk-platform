@@ -32,7 +32,7 @@ mrb_wifi_start(mrb_state *mrb, mrb_value klass)
 
 static void fxProgresscallback(void)
 {
-	printf("!STATUS: %d\n", wifiComGetCurrentState());
+	printf("!STATUS: %d\n", wifiComGetCurrentStateToApplication());
 }
 
 /*Turn on/off the power 1 - on 0 - off*/
@@ -42,7 +42,7 @@ mrb_wifi_power(mrb_state *mrb, mrb_value klass)
   mrb_int state, ret;
   mrb_get_args(mrb, "i", &state);
 
-  ret = wifiComInit(fxProgresscallback);
+  ret = wifiComInit(fxProgresscallback, NULL);
 
   ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_INICIALIZADO);
 
@@ -146,7 +146,7 @@ static mrb_value mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
 	else
 	{
 		wifiComInicOpcoesRedeWifi();
-		wifiComAddOpcaoRedeWifi((char *) sEssid, (char *) sPassword, avx_wifi_encryption);
+		wifiComAddOpcaoRedeWifi((char *) sEssid, (char *) sPassword, avx_wifi_encryption, 0);
 
 		wifiComSetDHCP(connectUsingDHCP);
 
@@ -163,7 +163,7 @@ static mrb_value mrb_wifi_connected_m(mrb_state *mrb, mrb_value klass)
 {
 	mrb_int ret=0;
 
-	int state = wifiComGetCurrentState();
+	int state = wifiComGetCurrentStateToApplication();
 
 	switch (state)
 	{
