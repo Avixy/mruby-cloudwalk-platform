@@ -81,7 +81,7 @@ mrb_io_init(mrb_state* mrb)
 {
   struct RClass *io;
 
-  io = mrb_define_class(mrb, "IO", mrb->object_class);
+  io = mrb_class_get(mrb, "IO");
 
   mrb_define_class_method(mrb , io , "_getc" , mrb_platform_io_s__getc , MRB_ARGS_REQ(1));
 
