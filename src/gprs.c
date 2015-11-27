@@ -22,7 +22,7 @@
 
 #include "network/network.h"
 #include "network/modem.h"
-#include "gprsInterface.h"
+#include "gprs/gprs_interface.h"
 
 
 static int simSlotSelected = 0;

@@ -3,8 +3,14 @@ MRuby::Gem::Specification.new('mruby-cloudwalk-platform') do |spec|
   spec.authors = 'CloudWalk Inc.'
 
   spec.cc.include_paths << "#{build.root}/src"
-  spec.cc.include_paths << "/home/sdk3400/avixy/include"
-  spec.cc.include_paths << "/home/sdk3400/workspace/include/libAvixy"
+  spec.cc.include_paths << "/home/eduardo/workspace/SDK/usr/include"
+  spec.cc.include_paths << "/home/eduardo/workspace/SDK/libraries/core/inc"
+  spec.cc.include_paths << "/home/eduardo/workspace/SDK/libraries/avixy/inc"  
+  spec.cc.include_paths << "/home/eduardo/workspace/SDK/avixy/avx3400/include"
+  spec.cc.include_paths << "/home/eduardo/workspace/SDK/libraries/network/inc"  
+  spec.cc.include_paths << "/home/eduardo/workspace/SDK/libraries/wifi/inc"  
+  spec.cc.include_paths << "/home/eduardo/workspace/SDK/libraries/gprs/inc"
+  spec.cc.include_paths << "/home/eduardo/workspace/SDK/libraries/magcard/inc"
   
   spec.linker.libraries << 'Avixy3400'
   spec.linker.libraries << 'MagCard'

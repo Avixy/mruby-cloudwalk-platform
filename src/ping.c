@@ -17,8 +17,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "wifiInterface.h"
-#include "gprsInterface.h"
+#include "wifi/wifi_interface.h"
+#include "gprs/gprs_interface.h"
 
 
 char dst_addr[20];

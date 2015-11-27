@@ -11,7 +11,7 @@
 
 /* Avixy SDK Includes */
 #include "network/network.h"
-#include "wifiInterface.h"
+#include "wifi/wifi_interface.h"
 
 
 #if MRUBY_RELEASE_NO < 10000

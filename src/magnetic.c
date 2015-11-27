@@ -7,8 +7,8 @@
 #include "mruby/string.h"
 #include "mruby/hash.h"
 
-#include <avixy/mag.h>
-#include "magCard.h"
+#include <ioctl/mag.h>
+#include "magcard/magcard.h"
 
 mrb_value
 mrb_magnetic_s_open(mrb_state *mrb, mrb_value self)

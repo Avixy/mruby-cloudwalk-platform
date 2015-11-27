@@ -7,8 +7,9 @@
 #include "mruby/string.h"
 #include "mruby/hash.h"
 
-#include "gfx/lcd.h"
-#include "core/bitmap.h"
+#include "core/fb.h"
+#include "avixy/fonts.h"
+#include "avixy/gfx/lcd.h"
 
 mrb_value
 mrb_display_s_clear(mrb_state *mrb, mrb_value self)
