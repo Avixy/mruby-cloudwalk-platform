@@ -7,15 +7,19 @@
 #include "mruby/string.h"
 #include "mruby/hash.h"
 
-#include <avixy/mag.h>
-#include "readers/magCard.h"
+#ifdef AVIXY_DEVICE
+#include "ioctl/mag.h"
+#include "magcard/magcard.h"
+#endif
 
 mrb_value
 mrb_magnetic_s_open(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
 
+#ifdef AVIXY_DEVICE
   readersEnableMag(1);
+#endif
 
   ret = 0;
 
@@ -27,7 +31,9 @@ mrb_magnetic_s_read(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
 
+#ifdef AVIXY_DEVICE
   ret = readersMagCheckResult(0);
+#endif
 
   return mrb_fixnum_value(ret);
 }
@@ -35,7 +41,9 @@ mrb_magnetic_s_read(mrb_state *mrb, mrb_value self)
 mrb_value
 mrb_magnetic_s_close(mrb_state *mrb, mrb_value self)
 {
+#ifdef AVIXY_DEVICE
 	readersEnableMag(0);
+#endif
 
   return mrb_nil_value();
 }
@@ -45,9 +53,11 @@ mrb_value
 mrb_magnetic_s_tracks(mrb_state *mrb, mrb_value self)
 {
   mrb_value hash;
-  struct mag_stripe magTracksInfo;
 
   hash = mrb_hash_new(mrb);
+
+#ifdef AVIXY_DEVICE  
+  struct mag_stripe magTracksInfo;
 
   if (readersMagGetInfo(&magTracksInfo) > 0) {
 
@@ -60,7 +70,7 @@ mrb_magnetic_s_tracks(mrb_state *mrb, mrb_value self)
 				mrb_symbol_value(mrb_intern_cstr(mrb, "track3")),
 				mrb_str_new_cstr(mrb, magTracksInfo.tracks[2].Chars));
 	}
-
+#endif
 
   return hash;
 }
