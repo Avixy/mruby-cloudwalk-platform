@@ -7,15 +7,23 @@
 #include "mruby/string.h"
 #include "mruby/hash.h"
 
-#include "gfx/lcd.h"
-#include "core/bitmap.h"
+#ifdef AVIXY_DEVICE
+#include "avixy/gfx.h"
+#include "avixy/gfx/menu.h"
+#include "avixy/gfx/forms.h"
+#include "avixy/gfx/input.h"
+#include "avixy/gfx/lcd.h"
+#include "avixy/bitmap.h"
+#endif
 
 mrb_value
 mrb_display_s_clear(mrb_state *mrb, mrb_value self)
 {
 
+#ifdef AVIXY_DEVICE
 	printf("LCD Clear!");
 	lcdClear();
+#endif
 
   return mrb_nil_value();
 }
@@ -27,8 +35,10 @@ mrb_display_s_clear_line(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &line);
 
+#ifdef AVIXY_DEVICE
   lcdSetCursorLC(line, 0);
   lcdClearEOL(-1);
+#endif
 
   return mrb_nil_value();
 }
@@ -41,9 +51,11 @@ mrb_display_s_print_bitmap(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "oii", &path, &y, &x);
 
+#ifdef AVIXY_DEVICE
   printf("display bitmap: x=%d, y=%d, bitmap=%s", x,y, (char *) mrb_ptr(path));
 
   lcdBitmapLoadFromFileToScreen((const char *) mrb_ptr(path), x, y);
+#endif
 
   return mrb_nil_value();
 }
@@ -55,9 +67,12 @@ mrb_display_s_print_line(mrb_state *mrb, mrb_value self)
   mrb_int x, y;
 
   mrb_get_args(mrb, "oii", &buf, &y, &x);
+
+#ifdef AVIXY_DEVICE  
   printf("display bitmap: x=%d, y=%d, bitmap=%s", x,y, (char *) mrb_ptr(buf));
 
   lcdPrint(x, y, (char *) mrb_ptr(buf));
+#endif  
 
   return mrb_nil_value();
 }
