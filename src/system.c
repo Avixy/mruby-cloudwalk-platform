@@ -9,7 +9,9 @@
 #include "mruby/hash.h"
 #include <sys/reboot.h>
 
-#include "core.h"
+#ifdef AVIXY_DEVICE
+#include "core/device_core.h"
+#endif
 
 static mrb_value
 mrb_system_s__serial(mrb_state *mrb, mrb_value self)
@@ -18,9 +20,11 @@ mrb_system_s__serial(mrb_state *mrb, mrb_value self)
   uint32_t serial_number;
 
   memset(&serial, 0, sizeof(serial));
-  serial_number = avxGetSerialNumber();
 
+#ifdef AVIXY_DEVICE
+  serial_number = avxGetSerialNumber();
   sprintf(serial, "%d", serial_number);
+#endif
 
   return mrb_str_new_cstr(mrb, serial);
 }
@@ -41,9 +45,9 @@ mrb_system_s__set_backlight(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &mode);
 
+#ifdef AVIXY_DEVICE
   avxSetBacklight(mode, mode);
-
-  /*TODO Implement*/
+#endif
 
   return mrb_fixnum_value(mode);
 }
@@ -63,11 +67,15 @@ static mrb_value
 mrb_system_s__battery(mrb_state *mrb, mrb_value self)
 {
   char battery[128];
+
+#ifdef AVIXY_DEVICE
   struct avx_charger batInfo;
   int capacity = 0;
+#endif
 
-  memset(&battery, 0, sizeof(battery));
+memset(&battery, 0, sizeof(battery));
 
+#ifdef AVIXY_DEVICE
   memset(&batInfo, 0, sizeof(struct avx_charger));
 
   if ( avxGetBatteryInfo(&batInfo) < 0 )
@@ -81,6 +89,7 @@ mrb_system_s__battery(mrb_state *mrb, mrb_value self)
   }
 
   sprintf(battery, "%d", capacity);
+#endif
 
   return mrb_str_new_cstr(mrb, battery);
 }
@@ -92,7 +101,9 @@ mrb_audio_s__beep(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "ii", &tone, &milliseconds);
 
+#ifdef AVIXY_DEVICE
   avxBuzzer(tone, milliseconds, 1);
+#endif
 
   return mrb_fixnum_value(tone);
 }
@@ -100,7 +111,13 @@ mrb_audio_s__beep(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_system_s_reboot(mrb_state *mrb, mrb_value self)
 {
+  mrb_int ret=0;
+
+#ifdef AVIXY_DEVICE  
   return mrb_fixnum_value(OsReboot());
+#endif
+
+  return mrb_fixnum_value(ret);
 }
 
 static mrb_value
