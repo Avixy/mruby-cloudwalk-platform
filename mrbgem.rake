@@ -2,10 +2,20 @@ MRuby::Gem::Specification.new('mruby-cloudwalk-platform') do |spec|
   spec.license = 'MIT'
   spec.authors = 'CloudWalk Inc.'
 
+  AVIXY_SDK_WORKSPACE = "/home/avixy/workspace"
+  AVIXY_LIBRARIES_PATH = "#{AVIXY_SDK_WORKSPACE}/libraries"
+
   spec.cc.include_paths << "#{build.root}/src"
-  spec.cc.include_paths << "/home/sdk3400/avixy/include"
-  spec.cc.include_paths << "/home/sdk3400/workspace/include/libAvixy"
-  
+  spec.cc.include_paths << "#{AVIXY_LIBRARIES_PATH}/core/inc" 
+  spec.cc.include_paths << "#{AVIXY_LIBRARIES_PATH}/avixy/inc" 
+  spec.cc.include_paths << "#{AVIXY_SDK_WORKSPACE}/avixy/avx3400/include"
+
+  # set the Avixy library path and libraries
+  if spec.cc.flags.grep(/AVX_MODEL/).size > 0
+    spec.linker.library_paths << "#{AVIXY_SDK_WORKSPACE}/libraries/avixy/SharedLib"
+    spec.linker.libraries << 'avixy'  
+  end
+
   # Add compile flags
   # spec.cc.flags << ''
 
