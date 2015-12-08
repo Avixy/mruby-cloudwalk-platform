@@ -19,9 +19,11 @@ MRuby::Gem::Specification.new('mruby-cloudwalk-platform') do |spec|
     spec.linker.library_paths << "#{AVIXY_SDK_WORKSPACE}/libraries/avixy/SharedLib"    
     spec.linker.library_paths << "#{AVIXY_SDK_WORKSPACE}/libraries/network/SharedLib"    
     spec.linker.library_paths << "#{AVIXY_SDK_WORKSPACE}/libraries/gprs/SharedLib"
+    spec.linker.library_paths << "#{AVIXY_SDK_WORKSPACE}/libraries/wifi/SharedLib"
     spec.linker.libraries << 'avixy'  
     spec.linker.libraries << 'network'  
     spec.linker.libraries << 'gprs'  
+    spec.linker.libraries << 'wifi'  
   end
 
   # Add compile flags
