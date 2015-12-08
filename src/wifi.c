@@ -32,6 +32,13 @@ mrb_wifi_start(mrb_state *mrb, mrb_value klass)
   return mrb_fixnum_value(ret);
 }
 
+static void fxProgresscallback(void)
+{
+#ifdef AVIXY_DEVICE	
+	printf("!STATUS: %d\n", wifiComGetCurrentStateToApplication());
+#endif
+}
+
 /*Turn on/off the power 1 - on 0 - off*/
 static mrb_value
 mrb_wifi_power(mrb_state *mrb, mrb_value klass)
@@ -40,7 +47,7 @@ mrb_wifi_power(mrb_state *mrb, mrb_value klass)
   mrb_get_args(mrb, "i", &state);
 
 #ifdef AVIXY_DEVICE
-  ret=wifiComInit(NULL, NULL); // No wifi listeners are needed. Ruby does the pooling via connected state
+  ret = wifiComInit(fxProgresscallback, NULL);
 
   ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_INICIALIZADO);
 #endif
@@ -50,20 +57,42 @@ mrb_wifi_power(mrb_state *mrb, mrb_value klass)
 
 #ifdef AVIXY_DEVICE
 static enum avxwifi_encryptions getAvixyEncryptionFromAuthStrAndCypherStr(const char * sAuthentication, const char * sCypher){
-	if (strcmp("open", sAuthentication) ==0 ) return WIFI_ENCRYPTION_NONE;
-	if (strcmp("wep", sAuthentication) ==0 ){
-		if (strcmp("wep64", sCypher) ==0 ) return WIFI_ENCRYPTION_WEP_64;
-		if (strcmp("wep128", sCypher) ==0 ) return WIFI_ENCRYPTION_WEP_128;
-		if (strcmp("wepx", sCypher) ==0 ) return WIFI_ENCRYPTION_WEP_256; // TODO: Veririficar se wepx = 256
+
+	if (strcmp("open", sAuthentication) ==0 )
+		return WIFI_ENCRYPTION_NONE;
+
+	if (strcmp("wep", sAuthentication) ==0 )
+	{
+		if (strcmp("wep64", sCypher) ==0 )
+			return WIFI_ENCRYPTION_WEP_64;
+
+		if (strcmp("wep128", sCypher) ==0 )
+			return WIFI_ENCRYPTION_WEP_128;
+
+		if (strcmp("wepx", sCypher) ==0 )
+			return WIFI_ENCRYPTION_WEP_256;
 	}
-	if (strcmp("wepshared", sAuthentication) ==0 ){
-			if (strcmp("wep64", sCypher) ==0 ) return WIFI_ENCRYPTION_WEP_64;
-			if (strcmp("wep128", sCypher) ==0 ) return WIFI_ENCRYPTION_WEP_128;
-			if (strcmp("wepx", sCypher) ==0 ) return WIFI_ENCRYPTION_WEP_256; // TODO: Veririficar se wepx = 256
-		}
-	if (strcmp("wpapsk", sAuthentication) ==0 ) return WIFI_ENCRYPTION_WPA_PSK;
-	if (strcmp("wpa2psk", sAuthentication) ==0 ) return WIFI_ENCRYPTION_WPA2_PSK;
-	if (strcmp("wpawpa2psk", sAuthentication) ==0 ) return WIFI_ENCRYPTION_WPA2_PSK; //TODO: acredito que esse seja wpa ou wpa2, portanto achei melhor escolher o 2.
+
+	if (strcmp("wepshared", sAuthentication) ==0 )
+	{
+			if (strcmp("wep64", sCypher) ==0 )
+				return WIFI_ENCRYPTION_WEP_64;
+
+			if (strcmp("wep128", sCypher) ==0 )
+				return WIFI_ENCRYPTION_WEP_128;
+
+			if (strcmp("wepx", sCypher) ==0 )
+				return WIFI_ENCRYPTION_WEP_256;
+	}
+
+	if (strcmp("wpapsk", sAuthentication) ==0 )
+		return WIFI_ENCRYPTION_WPA_PSK;
+
+	if (strcmp("wpa2psk", sAuthentication) ==0 )
+		return WIFI_ENCRYPTION_WPA2_PSK;
+
+	if (strcmp("wpawpa2psk", sAuthentication) ==0 )
+		return WIFI_ENCRYPTION_WPA2_PSK;
 
 	//Os outros modos não são suportados.
 	return -1;
@@ -72,67 +101,68 @@ static enum avxwifi_encryptions getAvixyEncryptionFromAuthStrAndCypherStr(const 
 
 extern int connectUsingDHCP;
 
-static mrb_value
-mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
+static mrb_value mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
 {
-  mrb_value password, essid, bssid, channel, mode, authentication, cipher;
-  const char *sPassword, *sEssid, *sBssid, *sChannel, *sCipher, *sMode, *sAuthentication;
-  int timeout=60000;
-  mrb_int ret = 0;
+	mrb_int ret = 0;
 
-  essid = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@essid"));
-  sEssid = mrb_str_to_cstr(mrb, essid);
+	mrb_value password, essid, bssid, channel, mode, authentication, cipher;
+	const char *sPassword, *sEssid, *sBssid, *sChannel, *sCipher, *sMode, *sAuthentication;
 
-  bssid = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@bssid"));
-  sBssid = mrb_str_to_cstr(mrb, bssid);
+	essid = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@essid"));
+	sEssid = mrb_str_to_cstr(mrb, essid);
 
-  channel = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@channel"));
-  sChannel = mrb_str_to_cstr(mrb, channel);
+	bssid = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@bssid"));
+	sBssid = mrb_str_to_cstr(mrb, bssid);
 
-  mode = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@mode"));
-  sMode = mrb_str_to_cstr(mrb, mode);
+	channel = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@channel"));
+	sChannel = mrb_str_to_cstr(mrb, channel);
 
 #ifdef AVIXY_DEVICE
-  enum avxwifi_modes avx_mode;
-  enum avxwifi_encryptions avx_wifi_encryption;
-  
-  if (strcmp("ibss",sMode)==0){
+	enum avxwifi_modes avx_mode;
+	enum avxwifi_encryptions avx_wifi_encryption;
+
+	mode = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@mode"));
+	sMode = mrb_str_to_cstr(mrb, mode);
+
+	if (strcmp("ibss",sMode)==0)
+	{
 	  avx_mode = WIFI_MODE_ADHOC;
-	  //TODO: Ver como fazer adhoc no 3400
-  } else {
+	}
+	else
+	{
 	  avx_mode = WIFI_MODE_INFRASTRUCTURE;
-  }
+	}
+
+	authentication = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@authentication"));
+	sAuthentication = mrb_str_to_cstr(mrb, authentication);
+
+	password = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@password"));
+	sPassword = mrb_str_to_cstr(mrb, password);
+
+	cipher = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@cipher"));
+	sCipher = mrb_str_to_cstr(mrb, cipher);
+
+	avx_wifi_encryption = getAvixyEncryptionFromAuthStrAndCypherStr(sAuthentication, sCipher);
+
+	printf("sAuthentication: %s, sCipher: %s, sEssid: %s, sBssid: %s, sPassword: %s, avx_wifi_encryption: %d\n", sAuthentication, sCipher, sEssid, sBssid, sPassword, avx_wifi_encryption);
+
+	if (avx_wifi_encryption == -1)
+	{
+		printf("Modo de conexão não suportado!\n");
+		ret = -1;
+	}
+	else
+	{
+		wifiComInicOpcoesRedeWifi();
+		wifiComAddOpcaoRedeWifi((char *) sEssid, (char *) sPassword, avx_wifi_encryption, 0); //index 0
+
+		wifiComSetDHCP(connectUsingDHCP);
+
+		ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_CONECTADO_COM_IP);
+	}
 #endif
 
-  authentication = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@authentication"));
-  sAuthentication = mrb_str_to_cstr(mrb, authentication);
-
-  password = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@password"));
-  sPassword = mrb_str_to_cstr(mrb, password);
-
-  cipher = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@cipher"));
-  sCipher = mrb_str_to_cstr(mrb, cipher);
-
-#ifdef AVIXY_DEVICE
-  avx_wifi_encryption = getAvixyEncryptionFromAuthStrAndCypherStr(sAuthentication, sCipher);
-
-  if (avx_wifi_encryption == -1){
-	  printf("Modo de conexão não suportado!\n");
-	  //TODO: Reportar erro pra plataforma.
-	  ret = -1;
-  } else {
-
-	  wifiComInicOpcoesRedeWifi();
-	  wifiComAddOpcaoRedeWifi((char *)sEssid , (char *)sPassword, avx_wifi_encryption, 0); // forcing index 0
-
-	  wifiComSetDHCP(connectUsingDHCP);
-	  //wifiComSetIPFixo("192.168.1.248", "192.168.1.1", "192.168.1.1", "192.168.1.1", "255.255.255.0");
-
-	  ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_CONECTADO_COM_IP);
-  }
-#endif
-
-  return mrb_fixnum_value(ret);
+	return mrb_fixnum_value(ret);
 }
 
 /*0   -> Sucess*/
@@ -140,12 +170,10 @@ mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
 /*< 0 -> Fail*/
 static mrb_value mrb_wifi_connected_m(mrb_state *mrb, mrb_value klass)
 {
-	char sEssid[32 + 1] = "                                \0";
-	char sBssid[19 + 1] = "                   \0";
-	mrb_int iRssi, ret;
+	mrb_int ret=0;
 
 #ifdef AVIXY_DEVICE
-	int state = wifiComGetCurrentState();
+	int state = wifiComGetCurrentStateToApplication();
 
 	switch (state)
 	{
@@ -168,13 +196,6 @@ static mrb_value mrb_wifi_connected_m(mrb_state *mrb, mrb_value klass)
 		break;
 	}
 #endif
-
-	/*TODO 	O que colocar em essid, bssid e iRssi?*/
-	if (ret == 0) {
-	/*mrb_cv_set(mrb, klass, mrb_intern_lit(mrb, "@essid"), mrb_str_new_cstr(mrb, sEssid));*/
-	/*mrb_cv_set(mrb, klass, mrb_intern_lit(mrb, "@bssid"), mrb_str_new_cstr(mrb, sBssid));*/
-	/*mrb_cv_set(mrb, klass, mrb_intern_lit(mrb, "@rssi"), mrb_fixnum_value(iRssi));*/
-	}
 
 	return mrb_fixnum_value(ret);
 }
