@@ -9,11 +9,10 @@
 #include "mruby/string.h"
 #include "mruby/variable.h"
 
-/* Avixy SDK Includes */
+#ifdef AVIXY_DEVICE
 #include "network/network.h"
-#include "wifiInterface.h"
-
-
+#include "wifi/wifi_interface.h"
+#endif
 
 #if MRUBY_RELEASE_NO < 10000
   #include "error.h"
@@ -26,7 +25,9 @@ mrb_wifi_start(mrb_state *mrb, mrb_value klass)
 {
   mrb_int ret=0;
 
+#ifdef AVIXY_DEVICE
   avxnmInterfacePriority(AVXNM_NETIF_PRIORITIES_WIFI_ETHERNET_MODEM);
+#endif
 
   return mrb_fixnum_value(ret);
 }
@@ -38,14 +39,16 @@ mrb_wifi_power(mrb_state *mrb, mrb_value klass)
   mrb_int state, ret;
   mrb_get_args(mrb, "i", &state);
 
-
-  ret=wifiComInit(NULL); //Não precisamos de ouvir os eventos da wifi, o ruby faz polling pelo conected.
+#ifdef AVIXY_DEVICE
+  ret=wifiComInit(NULL, NULL); // No wifi listeners are needed. Ruby does the pooling via connected state
 
   ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_INICIALIZADO);
+#endif
 
   return mrb_fixnum_value(ret);
 }
 
+#ifdef AVIXY_DEVICE
 static enum avxwifi_encryptions getAvixyEncryptionFromAuthStrAndCypherStr(const char * sAuthentication, const char * sCypher){
 	if (strcmp("open", sAuthentication) ==0 ) return WIFI_ENCRYPTION_NONE;
 	if (strcmp("wep", sAuthentication) ==0 ){
@@ -65,15 +68,13 @@ static enum avxwifi_encryptions getAvixyEncryptionFromAuthStrAndCypherStr(const 
 	//Os outros modos não são suportados.
 	return -1;
 }
+#endif
 
 extern int connectUsingDHCP;
 
 static mrb_value
 mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
 {
-	enum avxwifi_modes avx_mode;
-	enum avxwifi_encryptions avx_wifi_encryption;
-
   mrb_value password, essid, bssid, channel, mode, authentication, cipher;
   const char *sPassword, *sEssid, *sBssid, *sChannel, *sCipher, *sMode, *sAuthentication;
   int timeout=60000;
@@ -91,12 +92,17 @@ mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
   mode = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@mode"));
   sMode = mrb_str_to_cstr(mrb, mode);
 
+#ifdef AVIXY_DEVICE
+  enum avxwifi_modes avx_mode;
+  enum avxwifi_encryptions avx_wifi_encryption;
+  
   if (strcmp("ibss",sMode)==0){
 	  avx_mode = WIFI_MODE_ADHOC;
 	  //TODO: Ver como fazer adhoc no 3400
   } else {
 	  avx_mode = WIFI_MODE_INFRASTRUCTURE;
   }
+#endif
 
   authentication = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@authentication"));
   sAuthentication = mrb_str_to_cstr(mrb, authentication);
@@ -107,6 +113,7 @@ mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
   cipher = mrb_cv_get(mrb, klass, mrb_intern_lit(mrb, "@cipher"));
   sCipher = mrb_str_to_cstr(mrb, cipher);
 
+#ifdef AVIXY_DEVICE
   avx_wifi_encryption = getAvixyEncryptionFromAuthStrAndCypherStr(sAuthentication, sCipher);
 
   if (avx_wifi_encryption == -1){
@@ -116,13 +123,15 @@ mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
   } else {
 
 	  wifiComInicOpcoesRedeWifi();
-	  wifiComAddOpcaoRedeWifi((char *)sEssid , (char *)sPassword, avx_wifi_encryption);
+	  wifiComAddOpcaoRedeWifi((char *)sEssid , (char *)sPassword, avx_wifi_encryption, 0); // forcing index 0
 
 	  wifiComSetDHCP(connectUsingDHCP);
 	  //wifiComSetIPFixo("192.168.1.248", "192.168.1.1", "192.168.1.1", "192.168.1.1", "255.255.255.0");
 
 	  ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_CONECTADO_COM_IP);
   }
+#endif
+
   return mrb_fixnum_value(ret);
 }
 
@@ -135,6 +144,7 @@ static mrb_value mrb_wifi_connected_m(mrb_state *mrb, mrb_value klass)
 	char sBssid[19 + 1] = "                   \0";
 	mrb_int iRssi, ret;
 
+#ifdef AVIXY_DEVICE
 	int state = wifiComGetCurrentState();
 
 	switch (state)
@@ -157,6 +167,7 @@ static mrb_value mrb_wifi_connected_m(mrb_state *mrb, mrb_value klass)
 		ret = 0;
 		break;
 	}
+#endif
 
 	/*TODO 	O que colocar em essid, bssid e iRssi?*/
 	if (ret == 0) {
@@ -173,7 +184,9 @@ mrb_wifi_disconnect(mrb_state *mrb, mrb_value klass)
 {
   mrb_int ret=0;
 
+#ifdef AVIXY_DEVICE
   ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_INICIALIZADO);
+#endif
 
   return mrb_fixnum_value(ret);
 }

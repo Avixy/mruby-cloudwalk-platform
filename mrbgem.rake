@@ -11,6 +11,7 @@ MRuby::Gem::Specification.new('mruby-cloudwalk-platform') do |spec|
   spec.cc.include_paths << "#{AVIXY_LIBRARIES_PATH}/magcard/inc"
   spec.cc.include_paths << "#{AVIXY_LIBRARIES_PATH}/network/inc"
   spec.cc.include_paths << "#{AVIXY_LIBRARIES_PATH}/gprs/inc"
+  spec.cc.include_paths << "#{AVIXY_LIBRARIES_PATH}/wifi/inc"
   spec.cc.include_paths << "#{AVIXY_SDK_WORKSPACE}/avixy/avx3400/include"
 
   # set the Avixy library path and libraries
