@@ -21,13 +21,13 @@ static mrb_value
 mrb_platform_io_s__getc(mrb_state *mrb, mrb_value self)
 {
   mrb_value timeout;
-  mrb_int key;
+  mrb_int milliseconds=0, key=0;
 
   mrb_get_args(mrb, "o", &timeout);
 
-  printf("i will get a char with timeout = %d", timeout);
+  if (mrb_fixnum_p(timeout)) milliseconds = mrb_fixnum(timeout);
 
-  key = kbdWaitKey(timeout);
+  key = kbdWaitKey(mrb_fixnum(milliseconds));
 
   return mrb_fixnum_value(key);
 }
