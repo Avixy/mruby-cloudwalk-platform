@@ -19,6 +19,7 @@ class Platform
 
   # Will be called at RunTime boot
   def self.setup
+    Screen.setup(21, 7)
     begin
       require 'cloudwalk_handshake'
       CloudwalkHandshake.configure!
