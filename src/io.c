@@ -23,17 +23,17 @@ enum input_mode
 
 static mrb_value
 mrb_platform_io_s__getc(mrb_state *mrb, mrb_value self)
-{    
-  mrb_int timeout=0, key;
+{
+  mrb_value timeout;
+  mrb_int milliseconds=0, key=0;
 
-  mrb_get_args(mrb, "i", &timeout);
+  mrb_get_args(mrb, "o", &timeout);
 
-  printf("i will get a char with timeout = %d", timeout);
+  if (mrb_fixnum_p(timeout)) milliseconds = mrb_fixnum(timeout);
 
 #ifdef AVIXY_DEVICE
-  key = kbdWaitKey(timeout);
+  key = kbdWaitKey(milliseconds);
 #endif
-
   return mrb_fixnum_value(key);
 }
 
