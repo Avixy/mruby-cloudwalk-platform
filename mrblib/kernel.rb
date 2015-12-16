@@ -73,8 +73,9 @@ module Kernel
 
   def getc(timeout_io = nil)
     timeout_io ||= IO.timeout
-    key = IO._getc(timeout_io)
-    p "=======>>>>> #{key.inspect}"
+    timeout_io = -1 if timeout_io == 0
+    
+    key = IO._getc(timeout_io)    
     convert_key(key)
   end
 
