@@ -19,12 +19,7 @@
 mrb_value
 mrb_display_s_clear(mrb_state *mrb, mrb_value self)
 {
-
-
-#ifdef AVIXY_DEVICE
-	printf("LCD Clear!\n");
 	lcdClear();
-#endif
 
   return mrb_nil_value();
 }
@@ -36,10 +31,8 @@ mrb_display_s_clear_line(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &line);
 
-#ifdef AVIXY_DEVICE
   lcdSetCursorLC(line, 0);
   lcdClearEOL(-1);
-#endif
 
   return mrb_nil_value();
 }
@@ -52,11 +45,9 @@ mrb_display_s_print_bitmap(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "oii", &path, &y, &x);
 
-#ifdef AVIXY_DEVICE
   printf("display bitmap: x=%d, y=%d, bitmap=%s", x,y, (char *) RSTRING_PTR(path));
 
   lcdBitmapLoadFromFileToScreen((const char *) RSTRING_PTR(path), x, y);
-#endif
 
   return mrb_nil_value();
 }
@@ -69,11 +60,9 @@ mrb_display_s_print_line(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "oii", &buf, &y, &x);
 
-#ifdef AVIXY_DEVICE  
   printf("display print line: x=%d, y=%d, type=%d, text=%s\n", x,y, mrb_type(buf), (char *) RSTRING_PTR(buf));
 
   lcdPrint(y, x, (char *) RSTRING_PTR(buf));
-#endif
 
   return mrb_nil_value();
 }
