@@ -2,29 +2,29 @@ module Kernel
   # TODO Implement
   SCREEN_X_SIZE  = 21
   SCREEN_Y_SIZE  = 7
-  XUI_KEY1       = 2
-  XUI_KEY2       = 3
-  XUI_KEY3       = 4
-  XUI_KEY4       = 5
-  XUI_KEY5       = 6
-  XUI_KEY6       = 7
-  XUI_KEY7       = 8
-  XUI_KEY8       = 9
-  XUI_KEY9       = 10
-  XUI_KEY0       = 11
-  XUI_KEYCANCEL  = 223
-  XUI_KEYTIMEOUT = 18
-  XUI_KEYCLEAR   = 14
-  XUI_KEYENTER   = 28
-  XUI_KEYSHARP   = 55
-  XUI_KEYF1      = 59
-  XUI_KEYF2      = 60
+  XUI_KEY1       = 49
+  XUI_KEY2       = 50
+  XUI_KEY3       = 51
+  XUI_KEY4       = 52
+  XUI_KEY5       = 53
+  XUI_KEY6       = 54
+  XUI_KEY7       = 55
+  XUI_KEY8       = 56
+  XUI_KEY9       = 57
+  XUI_KEY0       = 48
+  XUI_KEYCANCEL  = 137
+  XUI_KEYTIMEOUT = -1
+  XUI_KEYCLEAR   = 8
+  XUI_KEYENTER   = 10
+  XUI_KEYSHARP   = 35
+  XUI_KEYF1      = 138
+  XUI_KEYF2      = 60 # could not find out the real key
   XUI_KEYF3      = 61
   XUI_KEYF4      = 62
   XUI_KEYALPHA   = 101
   XUI_KEYFUNC    = 102
-  XUI_KEYUP      = 103
-  XUI_KEYDOWN    = 108
+  XUI_KEYUP      = 153
+  XUI_KEYDOWN    = 150
   XUI_KEYMENU    = 139
   # TODO Implement
 
@@ -73,7 +73,9 @@ module Kernel
 
   def getc(timeout_io = nil)
     timeout_io ||= IO.timeout
-    convert_key(IO._getc(timeout_io))
+    key = IO._getc(timeout_io)
+    p "=======>>>>> #{key.inspect}"
+    convert_key(key)
   end
 
   private
