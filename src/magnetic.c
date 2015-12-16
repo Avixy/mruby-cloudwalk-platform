@@ -7,19 +7,15 @@
 #include "mruby/string.h"
 #include "mruby/hash.h"
 
-#ifdef AVIXY_DEVICE
 #include "ioctl/mag.h"
 #include "magcard/magcard.h"
-#endif
 
 mrb_value
 mrb_magnetic_s_open(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
 
-#ifdef AVIXY_DEVICE
   readersEnableMag(1);
-#endif
 
   ret = 0;
 
@@ -34,9 +30,7 @@ mrb_magnetic_s_read(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
 
-#ifdef AVIXY_DEVICE
   ret = readersMagCheckResult(0);
-#endif
 
   return mrb_fixnum_value(ret);
 }
@@ -44,9 +38,7 @@ mrb_magnetic_s_read(mrb_state *mrb, mrb_value self)
 mrb_value
 mrb_magnetic_s_close(mrb_state *mrb, mrb_value self)
 {
-#ifdef AVIXY_DEVICE
 	readersEnableMag(0);
-#endif
 
   return mrb_nil_value();
 }
@@ -59,53 +51,37 @@ mrb_magnetic_s_tracks(mrb_state *mrb, mrb_value self)
 
   hash = mrb_hash_new(mrb);
 
-#ifdef AVIXY_DEVICE  
   struct mag_stripe magTracksInfo;
 
-  if (readersMagGetInfo(&magTracksInfo) > 0) {
+  if (readersMagGetInfo(&magTracksInfo) > 0) {  		
 
-		mrb_value trilha;
 		if (magTracksInfo.tracks[0].status == 0
 				&& magTracksInfo.tracks[0].CharCount > 0)
-		{
-			mrb_value trilha = mrb_str_new_cstr(mrb,
-					magTracksInfo.tracks[0].Chars);
-		}
-		else
-		{
-			trilha = mrb_str_new_cstr(mrb, "");
-		}
+		{			
+			mrb_value track = mrb_str_new_static(mrb,
+					magTracksInfo.tracks[0].Chars, magTracksInfo.tracks[0].CharCount);
+			mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track1")), track);
+		}		
 
-		mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track1")), trilha);
 
 		if (magTracksInfo.tracks[1].status == 0
 				&& magTracksInfo.tracks[1].CharCount > 0)
 		{
-			mrb_value trilha = mrb_str_new_cstr(mrb,
-					magTracksInfo.tracks[1].Chars);
-		}
-		else
-		{
-			trilha = mrb_str_new_cstr(mrb, "");
-		}
+			mrb_value track = mrb_str_new_static(mrb,
+					magTracksInfo.tracks[1].Chars, magTracksInfo.tracks[1].CharCount);
+			mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track2")), track);
+		}		
 
-		mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track2")), trilha);
 
 		if (magTracksInfo.tracks[2].status == 0
 				&& magTracksInfo.tracks[2].CharCount > 0)
 		{
-			mrb_value trilha = mrb_str_new_cstr(mrb,
-					magTracksInfo.tracks[2].Chars);
-		}
-		else
-		{
-			trilha = mrb_str_new_cstr(mrb, "");
-		}
-
-		mrb_hash_set(mrb, hash,mrb_symbol_value(mrb_intern_cstr(mrb, "track3")), trilha);
+			mrb_value track = mrb_str_new_static(mrb,
+					magTracksInfo.tracks[2].Chars, magTracksInfo.tracks[2].CharCount);
+			mrb_hash_set(mrb, hash,mrb_symbol_value(mrb_intern_cstr(mrb, "track3")), track);
+		}		
 
 	}
-#endif
 
   return hash;
 }
