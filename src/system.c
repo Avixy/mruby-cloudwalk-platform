@@ -7,12 +7,13 @@
 #include "mruby/array.h"
 #include "mruby/string.h"
 #include "mruby/hash.h"
-#include <sys/reboot.h>
 
-#ifdef AVIXY_DEVICE
+// Avixy includes
 #include "core/device_core.h"
+// #include "avixy/avixy.h"
 #include "sys/param.h"
-#endif
+// #include "avixy/types.h"
+#include <sys/reboot.h>
 
 static mrb_value
 mrb_system_s__serial(mrb_state *mrb, mrb_value self)
@@ -118,12 +119,8 @@ mrb_system_s_reboot(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret=0;
 
-#ifdef AVIXY_DEVICE  
-  return mrb_fixnum_value(OsReboot());
-#else 
+  avxResetSystem();
   return mrb_fixnum_value(ret);
-#endif
-
 }
 
 static mrb_value
@@ -131,22 +128,20 @@ mrb_system_s_hwclock(mrb_state *mrb, mrb_value self)
 {
   /*ST_TIME t;*/
   mrb_int year, month, day, hour, minute, second;
-
   mrb_get_args(mrb, "iiiiii", &year, &month, &day, &hour, &minute, &second);
 
-  /*
-   *t.Year   = year;
-   *t.Month  = month;
-   *t.Day    = day;
-   *t.Hour   = hour;
-   *t.Minute = minute;
-   *t.Second = second;
-   */
+  struct tm tm;
 
-  /*mrb_fixnum_value(OsSetTime(&t));*/
-  mrb_fixnum_value(0);
+  tm.tm_mday = day;
+  tm.tm_mon = month - 1;
+  tm.tm_year = year - 1900;
+  tm.tm_hour = hour;
+  tm.tm_min = minute;
+  tm.tm_sec = second;
+  
+  dtmSetTimetm(&tm);
 
- return mrb_fixnum_value(reboot(RB_AUTOBOOT));
+ return mrb_fixnum_value(0);
 }
 
 void
