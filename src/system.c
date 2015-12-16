@@ -127,18 +127,25 @@ static mrb_value
 mrb_system_s_hwclock(mrb_state *mrb, mrb_value self)
 {
   /*ST_TIME t;*/
+  mrb_value timezone;
   mrb_int year, month, day, hour, minute, second;
-  mrb_get_args(mrb, "iiiiii", &year, &month, &day, &hour, &minute, &second);
+  mrb_get_args(mrb, "iiiiiio", &year, &month, &day, &hour, &minute, &second, &timezone);
 
   struct tm tm;
 
   tm.tm_mday = day;
   tm.tm_mon = month - 1;
   tm.tm_year = year - 1900;
-  tm.tm_hour = hour;
+  tm.tm_hour = hour; 
   tm.tm_min = minute;
   tm.tm_sec = second;
-  
+
+  if(mrb_string_p(timezone))  {
+    char tzone[10];
+    sscanf(tzone, "TZ=%s", RSTRING_PTR(timezone));
+    dtmSetTimeZone(tzone); 
+  }
+
   dtmSetTimetm(&tm);
 
  return mrb_fixnum_value(0);
