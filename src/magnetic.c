@@ -55,11 +55,14 @@ mrb_magnetic_s_tracks(mrb_state *mrb, mrb_value self)
 
   if (readersMagGetInfo(&magTracksInfo) > 0) {  		
 
+  		char buffer[128];
+  		
 		if (magTracksInfo.tracks[0].status == 0
 				&& magTracksInfo.tracks[0].CharCount > 0)
 		{			
-			mrb_value track = mrb_str_new_static(mrb,
-					magTracksInfo.tracks[0].Chars, magTracksInfo.tracks[0].CharCount);
+			memset(buffer, 0x00, 128);
+			readersMagGetTrack(buffer, 0);
+			mrb_value track = mrb_str_new_cstr(mrb, buffer);
 			mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track1")), track);
 		}		
 
@@ -67,8 +70,9 @@ mrb_magnetic_s_tracks(mrb_state *mrb, mrb_value self)
 		if (magTracksInfo.tracks[1].status == 0
 				&& magTracksInfo.tracks[1].CharCount > 0)
 		{
-			mrb_value track = mrb_str_new_static(mrb,
-					magTracksInfo.tracks[1].Chars, magTracksInfo.tracks[1].CharCount);
+			memset(buffer, 0x00, 128);
+			readersMagGetTrack(buffer, 1);
+			mrb_value track = mrb_str_new_cstr(mrb, buffer);
 			mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track2")), track);
 		}		
 
@@ -76,9 +80,10 @@ mrb_magnetic_s_tracks(mrb_state *mrb, mrb_value self)
 		if (magTracksInfo.tracks[2].status == 0
 				&& magTracksInfo.tracks[2].CharCount > 0)
 		{
-			mrb_value track = mrb_str_new_static(mrb,
-					magTracksInfo.tracks[2].Chars, magTracksInfo.tracks[2].CharCount);
-			mrb_hash_set(mrb, hash,mrb_symbol_value(mrb_intern_cstr(mrb, "track3")), track);
+			memset(buffer, 0x00, 128);
+			readersMagGetTrack(buffer, 2);
+			mrb_value track = mrb_str_new_cstr(mrb, buffer);
+			mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_cstr(mrb, "track3")), track);
 		}		
 
 	}
