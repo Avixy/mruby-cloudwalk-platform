@@ -7,12 +7,15 @@
 #include "mruby/string.h"
 #include "mruby/hash.h"
 
+// Avixy includes
+#include "core/printer.h"
+
 static mrb_value
 mrb_platform_print_s__open(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
-
-  /*ret = OsPrnOpen();*/
+  
+  ret = printerInit()
 
   return mrb_fixnum_value(ret);
 }
@@ -20,14 +23,15 @@ mrb_platform_print_s__open(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_platform_print_s__reset(mrb_state *mrb, mrb_value self)
 {
-  /*OsPrnReset();*/
+  printerClose();
+  printerInit();  
   return mrb_nil_value();
 }
 
 static mrb_value
 mrb_platform_print_s__close(mrb_state *mrb, mrb_value self)
 {
-  /*OsPrnClose();*/
+  printerClose();
   return mrb_nil_value();
 }
 
