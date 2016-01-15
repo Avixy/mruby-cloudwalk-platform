@@ -153,12 +153,12 @@ static mrb_value mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
 	}
 	else
 	{
-		wifiComInicOpcoesRedeWifi();
-		wifiComAddOpcaoRedeWifi((char *) sEssid, (char *) sPassword, avx_wifi_encryption, 0); //index 0
+		wifiComInitWifiNetworkOptions();
+		wifiComAddWifiNetworkOption((char *) sEssid, (char *) sPassword, avx_wifi_encryption, 0); //index 0
 
 		wifiComSetDHCP(connectUsingDHCP);
 
-		ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_CONECTADO_COM_IP);
+		ret = wifiComSetOperationMode(WIFI_MODO_CONECTADO_COM_IP);
 	}
 #endif
 
