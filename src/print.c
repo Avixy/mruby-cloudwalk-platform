@@ -8,14 +8,17 @@
 #include "mruby/hash.h"
 
 // Avixy includes
+#include "core/fb.h"
 #include "core/printer.h"
+#include "avixy/fonts.h"
+#include "avixy/printer.h"
 
 static mrb_value
 mrb_platform_print_s__open(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
   
-  ret = printerInit()
+  ret = printerInit();
 
   return mrb_fixnum_value(ret);
 }
@@ -39,11 +42,14 @@ static mrb_value
 mrb_platform_print_s__font(mrb_state *mrb, mrb_value self)
 {
   mrb_value filename;
-  mrb_int ret;
+  mrb_int ret = 0;
 
   mrb_get_args(mrb, "s", &filename);
 
-  /*ret = OsPrnSetFont(RSTRING_PTR(filename))*/
+  fontInitFontList();
+
+  const font_t *selected_font = fontSelectByName(RSTRING_PTR(filename), NULL);     
+  ret = prnSetFont(selected_font);
 
   return mrb_fixnum_value(ret);
 }
@@ -51,10 +57,11 @@ mrb_platform_print_s__font(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_platform_print_s__level(mrb_state *mrb, mrb_value self)
 {
-  mrb_int level=0;
+  mrb_int level=0;  
 
   mrb_get_args(mrb, "i", &level);
-  /*OsPrnSetGray(level);*/
+  
+  prnSetQualidadeImpressao(level);
 
   return mrb_nil_value();
 }
@@ -67,6 +74,7 @@ mrb_platform_print_s__size(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "iiii", &singlecode_width, &singlecode_height, &multicode_width, &multicode_height);
 
   /*OsPrnSelectFontSize(singlecode_width, singlecode_height, multicode_width, multicode_height);*/
+
   return mrb_nil_value();
 }
 
