@@ -71,9 +71,9 @@ mrb_platform_print_s__size(mrb_state *mrb, mrb_value self)
 {
   mrb_int singlecode_width=0,singlecode_height=0,multicode_width=0,multicode_height=0;
 
-  mrb_get_args(mrb, "iiii", &singlecode_width, &singlecode_height, &multicode_width, &multicode_height);
+  mrb_get_args(mrb, "iiii", &singlecode_width, &singlecode_height, &multicode_width, &multicode_height);  
 
-  /*OsPrnSelectFontSize(singlecode_width, singlecode_height, multicode_width, multicode_height);*/
+  prnScaling(singlecode_width, singlecode_height);
 
   return mrb_nil_value();
 }
@@ -83,6 +83,7 @@ mrb_platform_print_s__feed(mrb_state *mrb, mrb_value self)
 {
   mrb_int size;
 
+  //FIXME: I did not implement this. Ask @scalone the meaning of this function
   mrb_get_args(mrb, "i", &size);
   /*OsPrnFeed(size);*/
 
@@ -95,7 +96,7 @@ mrb_platform_print_s__print(mrb_state *mrb, mrb_value self)
   mrb_value buf;
 
   mrb_get_args(mrb, "S", &buf);
-  /*OsPrnPrintf(RSTRING_PTR(buf));*/
+  prnString(RSTRING_PTR(buf),  AVX_PRT_NORMAL);  
 
   return mrb_nil_value();
 }
@@ -107,7 +108,7 @@ mrb_platform_print_s__print_bmp(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "s", &path);
 
-  /*OsPrnPutImage(RSTRING_PTR(path));*/
+  prnBitmapCentralized(RSTRING_PTR(path));  
 
   return mrb_nil_value();
 }
@@ -116,8 +117,8 @@ static mrb_value
 mrb_platform_print_s__check(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
-
-  /*ret = OsPrnCheck();*/
+  
+  ret = prnPaperStatus();
 
   return mrb_fixnum_value(ret);
 }
