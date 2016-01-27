@@ -55,7 +55,7 @@ int fillAPN(int operadora, char *nomeOperadora, struct avxmodem_access_point *ap
 static void fxProgresscallback(void)
 {
 #ifdef AVIXY_DEVICE  
-	printf("!STATUS: %d\n", gprsComGetCurrentStateToApplication());
+	printf("!STATUS: %d\n", gprsCommGetCurrentStateToApplication());
 #endif  
 }
 
@@ -70,9 +70,9 @@ mrb_gprs_start(mrb_state *mrb, mrb_value klass)
 #ifdef AVIXY_DEVICE
   avxnmInterfacePriority(AVXNM_NETIF_PRIORITIES_MODEM_ETHERNET_WIFI);
 
-  gprsComSetSimSlot(simSlotSelected);
+  gprsCommSetSimSlot(simSlotSelected);
 
-  gprsComSetModoOperacaoDesejado(GPRS_MODO_REGISTRADO);
+  gprsCommSetDesiredOperationMode(GPRS_MODO_REGISTRADO);
 #endif
 
   printf("saindo mrb_gprs_start ..\n");
@@ -89,9 +89,9 @@ mrb_gprs_power(mrb_state *mrb, mrb_value klass)
 
 #ifdef AVIXY_DEVICE
   if (on){
-	  gprsComSetModoOperacaoDesejado(GPRS_MODO_CONECTADO);
+	  gprsCommSetDesiredOperationMode(GPRS_MODO_CONECTADO);
   }else{
-	  gprsComSetModoOperacaoDesejado(GPRS_MODO_DESLIGADO);
+	  gprsCommSetDesiredOperationMode(GPRS_MODO_DESLIGADO);
   }
 #endif
 
@@ -128,13 +128,13 @@ mrb_gprs_connect(mrb_state *mrb, mrb_value klass)
   strncpy(strGPRSPasswd, sPass, sizeof(strGPRSPasswd));
 
 #ifdef AVIXY_DEVICE  
-  printf("vou entrar no gprsComInit ..\n");
+  printf("vou entrar no gprsCommInit ..\n");
 
-  ret = gprsComInit("8486", prvIdDoSimCard, fxProgresscallback, fillAPN);
+  ret = gprsCommInit("8486", prvIdDoSimCard, fxProgresscallback, fillAPN);
 
-  printf("sai no gprsComInit ..\n");
+  printf("sai no gprsCommInit ..\n");
 
-  ret = gprsComSetModoOperacaoDesejado(GPRS_MODO_CONECTADO);
+  ret = gprsCommSetDesiredOperaionMode(GPRS_MODO_CONECTADO);
 #endif
 
   printf("saindo do mrb_gprs_connect\n");
@@ -153,7 +153,7 @@ mrb_gprs_connected_m(mrb_state *mrb, mrb_value klass)
   int state;
 
 #ifdef AVIXY_DEVICE
-  state = gprsComGetCurrentStateToApplication();
+  state = gprsCommGetCurrentStateToApplication();
 
   switch (state)
 	{
@@ -188,7 +188,7 @@ mrb_gprs_disconnect(mrb_state *mrb, mrb_value klass)
 {
 
 #ifdef AVIXY_DEVICE
-  gprsComSetModoOperacaoDesejado(GPRS_MODO_REGISTRADO);
+  gprsCommSetDesiredOperationMode(GPRS_MODO_REGISTRADO);
 #endif
 
   return mrb_true_value();

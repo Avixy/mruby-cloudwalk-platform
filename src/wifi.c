@@ -35,7 +35,7 @@ mrb_wifi_start(mrb_state *mrb, mrb_value klass)
 static void fxProgresscallback(void)
 {
 #ifdef AVIXY_DEVICE	
-	printf("!STATUS: %d\n", wifiComGetCurrentStateToApplication());
+	printf("!STATUS: %d\n", wifiCommGetCurrentStateToApplication());
 #endif
 }
 
@@ -47,9 +47,9 @@ mrb_wifi_power(mrb_state *mrb, mrb_value klass)
   mrb_get_args(mrb, "i", &state);
 
 #ifdef AVIXY_DEVICE
-  ret = wifiComInit(fxProgresscallback, NULL);
+  ret = wifiCommInit(fxProgresscallback, NULL);
 
-  ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_INICIALIZADO);
+  ret = wifiCommSetDesiredOperationMode(WIFI_MODO_INICIALIZADO);
 #endif
 
   return mrb_fixnum_value(ret);
@@ -153,12 +153,12 @@ static mrb_value mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
 	}
 	else
 	{
-		wifiComInitWifiNetworkOptions();
-		wifiComAddWifiNetworkOption((char *) sEssid, (char *) sPassword, avx_wifi_encryption, 0); //index 0
+		wifiCommInitWifiNetworkOptions();
+		wifiCommAddWifiNetworkOption((char *) sEssid, (char *) sPassword, avx_wifi_encryption, 0); //index 0
 
-		wifiComSetDHCP(connectUsingDHCP);
+		wifiCommSetDHCP(connectUsingDHCP);
 
-		ret = wifiComSetOperationMode(WIFI_MODO_CONECTADO_COM_IP);
+		ret = wifiCommSetDesiredOperationMode(WIFI_MODO_CONECTADO_COM_IP);
 	}
 #endif
 
@@ -173,7 +173,7 @@ static mrb_value mrb_wifi_connected_m(mrb_state *mrb, mrb_value klass)
 	mrb_int ret=0;
 
 #ifdef AVIXY_DEVICE
-	int state = wifiComGetCurrentStateToApplication();
+	int state = wifiCommGetCurrentStateToApplication();
 
 	switch (state)
 	{
@@ -206,7 +206,7 @@ mrb_wifi_disconnect(mrb_state *mrb, mrb_value klass)
   mrb_int ret=0;
 
 #ifdef AVIXY_DEVICE
-  ret = wifiComSetModoOperacaoDesejado(WIFI_MODO_INICIALIZADO);
+  ret = wifiCommSetDesiredOperationMode(WIFI_MODO_INICIALIZADO);
 #endif
 
   return mrb_fixnum_value(ret);
