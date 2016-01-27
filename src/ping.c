@@ -28,8 +28,8 @@ void usage();
 char* getip();
 char* toip(char*);
 
-char *wifiComGetCurrentIpStr(void);
-char *gprsComGetCurrentIpStr(void);
+char *wifiCommGetCurrentIpStr(void);
+char *gprsCommGetCurrentIpStr(void);
 
 int ping(char* to, int timeout)
 {
@@ -53,15 +53,15 @@ int ping(char* to, int timeout)
     int selectResult = 0;
     struct timeval tv;
 
-    //printf("wifiComGetCurrentStateToApplication() = %d, gprsComGetCurrentStateToApplication() = %d\n", wifiComGetCurrentStateToApplication(), gprsComGetCurrentStateToApplication());
+    //printf("wifiComGetCurrentStateToApplication() = %d, gprsCommGetCurrentStateToApplication() = %d\n", wifiComGetCurrentStateToApplication(), gprsCommGetCurrentStateToApplication());
 
-    if(wifiComGetCurrentStateToApplication() == W_CONNECTED)
+    if(wifiCommGetCurrentStateToApplication() == W_CONNECTED)
     {
-    	strcpy(POSip, wifiComGetCurrentIpStr());
+    	strcpy(POSip, wifiCommGetCurrentIpStr());
     }
-    else if(gprsComGetCurrentStateToApplication() == G_PPP_CONNECTED)
+    else if(gprsCommGetCurrentStateToApplication() == G_PPP_CONNECTED)
     {
-    	strcpy(POSip, gprsComGetCurrentIpStr());
+    	strcpy(POSip, gprsCommGetCurrentIpStr());
     }
     else
     {
