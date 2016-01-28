@@ -61,7 +61,7 @@ mrb_platform_print_s__level(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &level);
   
-  prnSetQualidadeImpressao(level);
+  printerSetQuality(level);
 
   return mrb_nil_value();
 }

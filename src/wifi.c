@@ -49,7 +49,7 @@ mrb_wifi_power(mrb_state *mrb, mrb_value klass)
 #ifdef AVIXY_DEVICE
   ret = wifiCommInit(fxProgresscallback, NULL);
 
-  ret = wifiCommSetDesiredOperationMode(WIFI_MODO_INICIALIZADO);
+  ret = wifiCommSetDesiredOperationMode(WIFI_INITIALIZED_MODE);
 #endif
 
   return mrb_fixnum_value(ret);
@@ -158,7 +158,7 @@ static mrb_value mrb_wifi_connect(mrb_state *mrb, mrb_value klass)
 
 		wifiCommSetDHCP(connectUsingDHCP);
 
-		ret = wifiCommSetDesiredOperationMode(WIFI_MODO_CONECTADO_COM_IP);
+		ret = wifiCommSetDesiredOperationMode(WIFI_CONNECTED_WITH_IP_MODE);
 	}
 #endif
 
@@ -206,7 +206,7 @@ mrb_wifi_disconnect(mrb_state *mrb, mrb_value klass)
   mrb_int ret=0;
 
 #ifdef AVIXY_DEVICE
-  ret = wifiCommSetDesiredOperationMode(WIFI_MODO_INICIALIZADO);
+  ret = wifiCommSetDesiredOperationMode(WIFI_INITIALIZED_MODE);
 #endif
 
   return mrb_fixnum_value(ret);
