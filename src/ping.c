@@ -53,7 +53,7 @@ int ping(char* to, int timeout)
     int selectResult = 0;
     struct timeval tv;
 
-    //printf("wifiComGetCurrentStateToApplication() = %d, gprsCommGetCurrentStateToApplication() = %d\n", wifiComGetCurrentStateToApplication(), gprsCommGetCurrentStateToApplication());
+    //printf("wifiCommGetCurrentStateToApplication() = %d, gprsCommGetCurrentStateToApplication() = %d\n", wifiCommGetCurrentStateToApplication(), gprsCommGetCurrentStateToApplication());
 
     if(wifiCommGetCurrentStateToApplication() == W_CONNECTED)
     {

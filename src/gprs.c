@@ -38,7 +38,7 @@ int fillAPN(int operadora, char *nomeOperadora, struct avxmodem_access_point *ap
 {
 	printf("entrando em %s\n", __FUNCTION__);
 
-	int indOperadora = OP_INDEFINIDA;
+	int indOperadora = OP_UNDEFINED;
 
 	strncpy(apn->apn, strGPRSApn, sizeof(apn->apn));
 	strncpy(apn->login, strGPRSUser, sizeof(apn->login));
@@ -72,7 +72,7 @@ mrb_gprs_start(mrb_state *mrb, mrb_value klass)
 
   gprsCommSetSimSlot(simSlotSelected);
 
-  gprsCommSetDesiredOperationMode(GPRS_MODO_REGISTRADO);
+  gprsCommSetDesiredOperationMode(GPRS_REGISTERED_MODE);
 #endif
 
   printf("saindo mrb_gprs_start ..\n");
@@ -89,9 +89,9 @@ mrb_gprs_power(mrb_state *mrb, mrb_value klass)
 
 #ifdef AVIXY_DEVICE
   if (on){
-	  gprsCommSetDesiredOperationMode(GPRS_MODO_CONECTADO);
+	  gprsCommSetDesiredOperationMode(GPRS_CONNECTED_MODE);
   }else{
-	  gprsCommSetDesiredOperationMode(GPRS_MODO_DESLIGADO);
+	  gprsCommSetDesiredOperationMode(GPRS_SHUTDOWN_MODE);
   }
 #endif
 
@@ -134,7 +134,7 @@ mrb_gprs_connect(mrb_state *mrb, mrb_value klass)
 
   printf("sai no gprsCommInit ..\n");
 
-  ret = gprsCommSetDesiredOperaionMode(GPRS_MODO_CONECTADO);
+  ret = gprsCommSetDesiredOperationMode(GPRS_CONNECTED_MODE);
 #endif
 
   printf("saindo do mrb_gprs_connect\n");
@@ -188,7 +188,7 @@ mrb_gprs_disconnect(mrb_state *mrb, mrb_value klass)
 {
 
 #ifdef AVIXY_DEVICE
-  gprsCommSetDesiredOperationMode(GPRS_MODO_REGISTRADO);
+  gprsCommSetDesiredOperationMode(GPRS_REGISTERED_MODE);
 #endif
 
   return mrb_true_value();
