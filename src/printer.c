@@ -14,7 +14,7 @@
 #include "avixy/printer.h"
 
 static mrb_value
-mrb_platform_print_s__open(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__open(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
   
@@ -24,7 +24,7 @@ mrb_platform_print_s__open(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_platform_print_s__reset(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__reset(mrb_state *mrb, mrb_value self)
 {
   printerClose();
   printerInit();  
@@ -32,14 +32,14 @@ mrb_platform_print_s__reset(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_platform_print_s__close(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__close(mrb_state *mrb, mrb_value self)
 {
   printerClose();
   return mrb_nil_value();
 }
 
 static mrb_value
-mrb_platform_print_s__font(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__font(mrb_state *mrb, mrb_value self)
 {
   mrb_value filename;
   mrb_int ret = 0;
@@ -55,7 +55,7 @@ mrb_platform_print_s__font(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_platform_print_s__level(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__level(mrb_state *mrb, mrb_value self)
 {
   mrb_int level=0;  
 
@@ -67,7 +67,7 @@ mrb_platform_print_s__level(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_platform_print_s__size(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__size(mrb_state *mrb, mrb_value self)
 {
   mrb_int singlecode_width=0,singlecode_height=0,multicode_width=0,multicode_height=0;
 
@@ -79,7 +79,7 @@ mrb_platform_print_s__size(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_platform_print_s__feed(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__feed(mrb_state *mrb, mrb_value self)
 {
   mrb_int size;
 
@@ -91,7 +91,7 @@ mrb_platform_print_s__feed(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_platform_print_s__print(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__print(mrb_state *mrb, mrb_value self)
 {
   mrb_value buf;
 
@@ -102,7 +102,7 @@ mrb_platform_print_s__print(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_platform_print_s__print_bmp(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__print_bmp(mrb_state *mrb, mrb_value self)
 {
   mrb_value path;
 
@@ -114,7 +114,7 @@ mrb_platform_print_s__print_bmp(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_platform_print_s__check(mrb_state *mrb, mrb_value self)
+mrb_platform_printer_s__check(mrb_state *mrb, mrb_value self)
 {
   mrb_int ret;
   
@@ -130,17 +130,17 @@ mrb_print_init(mrb_state* mrb)
   struct RClass *print;
 
   platform = mrb_class_get(mrb, "Platform");
-  print    = mrb_define_class_under(mrb, platform, "Print", mrb->object_class);
+  print    = mrb_define_class_under(mrb, platform, "Printer", mrb->object_class);
 
-  mrb_define_class_method(mrb , print , "_open"      , mrb_platform_print_s__open      , MRB_ARGS_NONE());
-  mrb_define_class_method(mrb , print , "_reset"     , mrb_platform_print_s__reset     , MRB_ARGS_NONE());
-  mrb_define_class_method(mrb , print , "_close"     , mrb_platform_print_s__close     , MRB_ARGS_NONE());
-  mrb_define_class_method(mrb , print , "_font="     , mrb_platform_print_s__font      , MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb , print , "_level="    , mrb_platform_print_s__level     , MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb , print , "_size"      , mrb_platform_print_s__size      , MRB_ARGS_REQ(4));
-  mrb_define_class_method(mrb , print , "_feed"      , mrb_platform_print_s__feed      , MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb , print , "_print"     , mrb_platform_print_s__print     , MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb , print , "_print_bmp" , mrb_platform_print_s__print_bmp , MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb , print , "_check"     , mrb_platform_print_s__check     , MRB_ARGS_NONE());
+  mrb_define_class_method(mrb , print , "_open"      , mrb_platform_printer_s__open      , MRB_ARGS_NONE());
+  mrb_define_class_method(mrb , print , "_reset"     , mrb_platform_printer_s__reset     , MRB_ARGS_NONE());
+  mrb_define_class_method(mrb , print , "_close"     , mrb_platform_printer_s__close     , MRB_ARGS_NONE());
+  mrb_define_class_method(mrb , print , "_font="     , mrb_platform_printer_s__font      , MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb , print , "_level="    , mrb_platform_printer_s__level     , MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb , print , "_size"      , mrb_platform_printer_s__size      , MRB_ARGS_REQ(4));
+  mrb_define_class_method(mrb , print , "_feed"      , mrb_platform_printer_s__feed      , MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb , print , "_print"     , mrb_platform_printer_s__print     , MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb , print , "_print_bmp" , mrb_platform_printer_s__print_bmp , MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb , print , "_check"     , mrb_platform_printer_s__check     , MRB_ARGS_NONE());
 }
 
