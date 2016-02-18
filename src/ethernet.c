@@ -15,6 +15,9 @@
   #include "mruby/error.h"
 #endif
 
+#include "network/network.h"
+#include "ethernet/eth_interface.h"
+
 #define RET_OK 0
 
 static mrb_value
@@ -48,8 +51,28 @@ mrb_ethernet_connect(mrb_state *mrb, mrb_value klass)
 static mrb_value
 mrb_ethernet_connected_m(mrb_state *mrb, mrb_value klass)
 {
-  /*TODO Implement*/
-  return mrb_fixnum_value(RET_OK);
+  mrb_int ret=RET_OK;
+  int state = ethCommGetCurrentStateToApplication();
+
+  switch (state)
+  {
+  case E_CONNECTED:
+    ret = RET_OK;
+    break;
+  case E_NO_DEVICE:
+  case E_NOT_INITIALIZED:
+  case E_INITIALIZING:
+  case E_INITIALIZED:
+  case E_INITIALIZED_NO_CABLE:
+  case E_CONNECTING:
+  case E_DISCONNECTING:
+  case E_SHUTTING_DOWN:  
+  default:
+    ret = !RET_OK;
+    break;    
+  }
+
+  return mrb_fixnum_value(ret);
 }
 
 static mrb_value
