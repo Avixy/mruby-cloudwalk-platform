@@ -14,20 +14,12 @@ class Platform
   end
 
   def self.version
-    "0.2.1"
+    "0.2.3"
   end
 
   def self.setup_keyboard
-    Device::IO::ONE_LETTERS   = ",.\#$%-+="
-    Device::IO::TWO_LETTERS   = "abcABC"
-    Device::IO::THREE_LETTERS = "defDEF"
-    Device::IO::FOUR_LETTERS  = "ghiGHI"
-    Device::IO::FIVE_LETTERS  = "jklJKL"
-    Device::IO::SIX_LETTERS   = "mnoMNO"
-    Device::IO::SEVEN_LETTERS = "pqrsPQRS"
-    Device::IO::EIGHT_LETTERS = "tuvTUV"
-    Device::IO::NINE_LETTERS  = "wxyzWXYZ"
-    Device::IO::ZERO_LETTERS  = "_"
+    Device::IO.setup_keyboard([",. \#$%-+=", "abcABC", "defDEF", "ghiGHI", "jklJKL",
+                              "mnoMNO", "pqrsPQRS", "tuvTUV", "wxyzWXYZ", "_"])
   end
 end
 
