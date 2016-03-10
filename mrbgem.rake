@@ -1,4 +1,4 @@
-AVIXY_SDK_WORKSPACE = "/home/avixy/workspace"
+AVIXY_SDK_WORKSPACE = "#{ENV['SDK_WORKSPACE_PATH']}"
 AVIXY_LIBRARIES_PATH = "#{AVIXY_SDK_WORKSPACE}/libraries"
 
 MRuby::Gem::Specification.new('mruby-cloudwalk-platform') do |spec|
