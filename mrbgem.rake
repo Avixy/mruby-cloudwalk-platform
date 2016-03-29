@@ -1,6 +1,3 @@
-AVIXY_SDK_WORKSPACE = "#{ENV['SDK_WORKSPACE_PATH']}"
-AVIXY_LIBRARIES_PATH = "#{AVIXY_SDK_WORKSPACE}/libraries"
-
 MRuby::Gem::Specification.new('mruby-cloudwalk-platform') do |spec|
   spec.license = 'Apache License 2.0'
   spec.authors = 'CloudWalk Inc.'
