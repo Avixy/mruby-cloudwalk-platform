@@ -85,8 +85,16 @@ mrb_system_s__battery(mrb_state *mrb, mrb_value self)
 	  //Report error.
 	  printf("Error on getBatteryInfo!\n");
   } else {
-	   capacity = ((batInfo.charge  * 100) / batInfo.capacity);
-	  if (batInfo.power_supply_present){
+    capacity = ((batInfo.charge  * 100) / batInfo.capacity);
+    
+    int psu_present = 0;
+#if AVX_MODEL == 4000
+    psu_present = batInfo.plug_ac;
+#else
+    psu_present = batInfo.power_supply_present;
+#endif
+
+    if (psu_present){
 		  capacity = (capacity >= 95 ? 6 : 5);
 	  } else {
 		  capacity = capacity / 5;
