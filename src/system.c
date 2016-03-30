@@ -10,9 +10,8 @@
 
 // Avixy includes
 #include "core/device_core.h"
-// #include "avixy/avixy.h"
+#include "avixy/avixy.h"
 #include "sys/param.h"
-// #include "avixy/types.h"
 #include <sys/reboot.h>
 
 static mrb_value
@@ -163,11 +162,9 @@ static mrb_value
 mrb_system_s_model(mrb_state *mrb, mrb_value self)
 {
   char version[32]="\0";
-
   memset(&version, 0, sizeof(version));
-
-  /*TODO Implement*/
-  /*OsGetSysVer(TYPE_PED_VER, version);*/
+  sprintf(version, "%s\0", DEVICE_MODEL);
+  printf("==========>>>>> device model: %s", DEVICE_MODEL);
 
   return mrb_str_new_cstr(mrb, version);
 }
@@ -176,10 +173,8 @@ static mrb_value
 mrb_system_s_brand(mrb_state *mrb, mrb_value self)
 {
   char brand[32]="\0";
-
   memset(&brand, 0, sizeof(brand));
-
-  /*TODO Implement*/
+  sprintf(brand, "%s\0", DEVICE_BRAND);
 
   return mrb_str_new_cstr(mrb, brand);
 }
@@ -187,23 +182,33 @@ mrb_system_s_brand(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_system_s_os_version(mrb_state *mrb, mrb_value self)
 {
-  char version[32]="\0";
+  avxCoreInit();
+  int mngFd = avxGetMngFd();
+  struct avx_firmware_version version = { };
+  char os_version[32]="\0";
+  memset(&os_version, 0, sizeof(os_version));
 
-  memset(&version, 0, sizeof(version));
+  int res = ioctl(mngFd, AVXSYS_GET_FIRMWARE_VERSION, &version );
+  
+  if(!res) // No Errors
+  {
+    // For Avixy the Os Version is the same as the Kernel version
+    sprintf(os_version, "%d.%d.%d\0", version.kernel.major, 
+      version.kernel.minor, version.kernel.change);
 
-  /*TODO Implement*/
+  }
+  printf("==========>>>>> os version: %s", os_version);
 
-  return mrb_str_new_cstr(mrb, version);
+  return mrb_str_new_cstr(mrb, os_version);
 }
 
 static mrb_value
 mrb_system_s_sdk_version(mrb_state *mrb, mrb_value self)
 {
   char version[32]="\0";
-
   memset(&version, 0, sizeof(version));
-
-  /*TODO Implement*/
+  sprintf(version, "%s", AVIXY_SDK_VERSION);
+  printf("==========>>>>> version: %s", version);
 
   return mrb_str_new_cstr(mrb, version);
 }
@@ -211,13 +216,12 @@ mrb_system_s_sdk_version(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_system_s_pinpad_version(mrb_state *mrb, mrb_value self)
 {
-  char version[32]="\0";
+  char pinpad_version[32]="\0";
+  memset(&pinpad_version, 0, sizeof(pinpad_version));
+  sprintf(pinpad_version, "%s\0", AVIXY_HW_VERSION);
+  printf("==========>>>>> pinpad version: %s", pinpad_version);
 
-  memset(&version, 0, sizeof(version));
-
-  /*TODO Implement*/
-
-  return mrb_str_new_cstr(mrb, version);
+  return mrb_str_new_cstr(mrb, pinpad_version);
 }
 
 void
