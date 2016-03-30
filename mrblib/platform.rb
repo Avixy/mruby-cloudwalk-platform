@@ -1,7 +1,7 @@
 class Platform
   # Will be called at RunTime boot
   def self.setup
-    Screen.setup(26, 12)
+    Screen.setup(21, 42)
     begin
       require 'posxml_parser'
       require 'cloudwalk_handshake'
