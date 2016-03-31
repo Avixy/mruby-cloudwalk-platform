@@ -20,9 +20,11 @@
 #endif
 
 #ifdef AVIXY_DEVICE
-#include "network/network.h"
-#include "network/modem.h"
-#include "gprs/gprs_interface.h"
+  #include "core/device_core.h"
+  #include "core/trace.h"
+  #include "network/network.h"
+  #include "network/modem.h"
+  #include "gprs/gprs_interface.h"
 #endif
 
 
@@ -46,7 +48,6 @@ int fillAPN(int operadora, char *nomeOperadora, struct avxmodem_access_point *ap
 
 	strcpy(nomePadraoDaOperadora, nomeOperadora);
 
-	printf("saindo de %s\n", __FUNCTION__);
 	return(indOperadora);
 }
 #endif
@@ -55,7 +56,7 @@ int fillAPN(int operadora, char *nomeOperadora, struct avxmodem_access_point *ap
 static void fxProgresscallback(void)
 {
 #ifdef AVIXY_DEVICE  
-	printf("!STATUS: %d\n", gprsCommGetCurrentStateToApplication());
+	printf("gprs state: %d\n", gprsCommGetCurrentStateToApplication());
 #endif  
 }
 
@@ -204,6 +205,13 @@ mrb_gprs_signal(mrb_state *mrb, mrb_value klass)
   return mrb_fixnum_value(signal);
 }
 
+/*Must to return the signal value between 1 and 5*/
+static mrb_value
+mrb_gprs_sim_id(mrb_state *mrb, mrb_value klass)
+{
+  return mrb_str_new_cstr(mrb, prvIdDoSimCard);
+}
+
 void
 mrb_gprs_init(mrb_state* mrb)
 {
@@ -219,5 +227,6 @@ mrb_gprs_init(mrb_state* mrb)
   mrb_define_class_method(mrb, gprs, "connected?", mrb_gprs_connected_m, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, gprs, "disconnect", mrb_gprs_disconnect, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, gprs, "signal", mrb_gprs_signal, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, gprs, "sim_id", mrb_gprs_sim_id, MRB_ARGS_NONE());
 }
 
