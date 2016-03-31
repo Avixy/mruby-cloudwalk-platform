@@ -13,8 +13,8 @@
 #include "avixy/gfx/forms.h"
 #include "avixy/gfx/input.h"
 #include "avixy/gfx/lcd.h"
+#include "avixy/gfx/sb.h"
 #include "avixy/bitmap.h"
-#include "avixy/sb.h"
 #endif
 
 mrb_value
