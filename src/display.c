@@ -14,6 +14,7 @@
 #include "avixy/gfx/input.h"
 #include "avixy/gfx/lcd.h"
 #include "avixy/bitmap.h"
+#include "avixy/sb.h"
 #endif
 
 mrb_value
@@ -75,26 +76,32 @@ mrb_display_s_print_status_bar(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "io", &slot, &path);
 
-  /*TODO Implement*/
-  /*if (mrb_string_p(path)) {*/
-    /*if (XuiSetStatusbarIcon(slot, RSTRING_PTR(path)) == 0)*/
-      /*return mrb_true_value();*/
-    /*else*/
-      /*return mrb_nil_value();*/
-  /*} else {*/
-    /*if (XuiSetStatusbarIcon(slot, NULL) == 0)*/
-      /*return mrb_true_value();*/
-    /*else*/
-      /*return mrb_nil_value();*/
-    /*return mrb_nil_value();*/
-  /*}*/
+  if (mrb_string_p(path)) {
+    if (sbSetStatusbarIcon(slot, RSTRING_PTR(path)) == 0)
+    {
+      return mrb_true_value();
+    }
+    else
+    {
+      return mrb_nil_value();
+    }
+  } else {
+    if (sbSetStatusbarIcon(slot, NULL) == 0)
+    {
+      return mrb_true_value();
+    }
+    else
+    {
+      return mrb_nil_value();
+    }
+  }
   return mrb_nil_value();
 }
 
 mrb_value
 mrb_display_s_status_bar_slots_available(mrb_state *mrb, mrb_value self)
 {
-  return mrb_fixnum_value(8);
+  return mrb_fixnum_value(sbGetStatubarSlotsAvailableCount());
 }
 
 void
